@@ -42,13 +42,17 @@ int main(int argc, char* argv[]) {
  vf2_print_callback<graph_type, graph_type> callback(graph1, graph2);
 
  // Create ordering of small graph
- vf2_order_by_mult<graph_type> vos(graph1);
+ // Using default instead. Need to fix with example 2 code.
+//  vf2_order_by_mult<graph_type> vos(graph1);
 
  // Print out all subgraph isomorphism mappings between graph1 and graph2.
  // Vertices and edges are assumed to be always equivalent.
-  vf2_subgraph_iso(graph1, graph2, callback, vos, vertices_equivalent([&graph_small, &graph_large](Graph::vertex_descriptor small_vd, Graph::vertex_descriptor large_vd) {
-    return out_degree(small_vd, graph_small) == out_degree(large_vd, graph_large);})
-   );
+  vf2_subgraph_iso(graph1, graph2, callback);
+
+//   bad attempt at custom predicate function
+//   vf2_subgraph_iso(graph1, graph2, callback, vos, vertices_equivalent([&graph_small, &graph_large](Graph::vertex_descriptor small_vd, Graph::vertex_descriptor large_vd) {
+//     return out_degree(small_vd, graph_small) == out_degree(large_vd, graph_large);})
+//    );
 
   // print out the graph
 //   write_graphviz(cout, graph2);
