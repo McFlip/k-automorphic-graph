@@ -4,6 +4,16 @@ Compiling flags required:
 main.cpp -mcmodel=medium
 anything with boost -I path/to/boost i.e. /usr/local/boost_1_63_0/boost/
 
+The Boost C++ Libraries were successfully built!
+
+The following directory should be added to compiler include paths:
+
+/usr/local/boost_1_63_0
+
+The following directory should be added to linker library paths:
+
+/usr/local/boost_1_63_0/stage/lib
+
 notes:
 web-NotreDame has Nodes: 325,729 Edges: 1,497,134
 Relying on compiler to do initialization of the matrix dropped execution time by 30 seconds.
