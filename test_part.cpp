@@ -41,14 +41,14 @@ int main(int argc, char* argv[]) {
   for(vpair.first; vpair.first != vpair.second; ++vpair.first){
     xadj[i+1] = xadj[i] + out_degree(*vpair.first, graph1);
     adjrange_t adjpair = adjacent_vertices(*vpair.first, graph1);
-    j = i;
+    j = xadj[i];
     for(adjpair.first; adjpair.first != adjpair.second; ++adjpair.first){
       adjncy[j] = *adjpair.first;
       ++j;
     }
     ++i;
   }
-  for(i = 0; i < nvert + 1; ++i){
+  /*  for(i = 0; i < nvert + 1; ++i){
     cout << xadj[i] << ' ';
   }
   cout << endl;
@@ -56,11 +56,8 @@ int main(int argc, char* argv[]) {
     cout << adjncy[i] << ' ';
   }
   cout << endl;
-  /*for(int i = 0; i < nvert; ++i){
-    xadj[i+1] = xadj[i] + out_degree(*vpair.first);
-    
-    for(int j = xadj[i]; j < xadj[i+1]; ++j){
-      
-    adjncy[j] = */
-      
+  */
+  delete[] xadj;
+  delete[] adjncy;
+  return 0;
 }
