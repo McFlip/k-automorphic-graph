@@ -27,8 +27,8 @@ int main(int argc, char* argv[]) {
 
   int nvert = num_vertices(graph1);
   int nedge = num_edges(graph1);
-  idx_t *xadj = new idx_t[nvert];
-  idx_t *adjncy = new idx_t[nedge];
+  idx_t *xadj = new idx_t[nvert + 1];
+  idx_t *adjncy = new idx_t[nedge * 2];
 
   xadj[0] = 0;
   typedef graph_traits<graph_type>::vertex_iterator vertex_iter;
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
     }
     ++i;
   }
-  /*  for(i = 0; i < nvert + 1; ++i){
+  for(i = 0; i < nvert + 1; ++i){
     cout << xadj[i] << ' ';
   }
   cout << endl;
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     cout << adjncy[i] << ' ';
   }
   cout << endl;
-  */
+  
   delete[] xadj;
   delete[] adjncy;
   return 0;
