@@ -14,6 +14,9 @@ The following directory should be added to linker library paths:
 
 /usr/local/boost_1_63_0/stage/lib
 
+g++ -I /usr/local/boost_1_63_0/ -std=c++11 test_k.cpp -L/usr/local/boost_1_63_0/stage/lib/ -lboost_graph
+
+
 notes:
 web-NotreDame has Nodes: 325,729 Edges: 1,497,134
 Relying on compiler to do initialization of the matrix dropped execution time by 30 seconds.
