@@ -3,24 +3,31 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/vf2_sub_graph_iso.hpp>
 #include <boost/graph/graphviz.hpp>
+#include <boost/graph/subgraph.hpp>
+#include <boost/graph/graph_utility.hpp>
 #include "metis.h"
 
 using namespace std;
 using namespace boost;
 
+const int K = 2;
 idx_t ncon = 1;
-idx_t nparts = 2;
+idx_t nparts = K;
 int main(int argc, char* argv[]) {
+  typedef subgraph< adjacency_list<vecS, vecS, undirectedS, no_property,
+    property< edge_index_t, int > > > graph_type;
+  typedef graph_traits<graph_type>::vertex_iterator vertex_iter;
+  typedef std::pair<vertex_iter, vertex_iter> vrange_t;
+  typedef graph_traits<graph_type>::adjacency_iterator adj_iter;
+  typedef std::pair<adj_iter, adj_iter> adjrange_t;
+  typedef property_map<graph_type, vertex_index_t>::type IndexMap;
 
-  typedef adjacency_list<vecS, vecS, undirectedS> graph_type;
   graph_type graph1(0);
-  //  graph_type graph2(0);
   ifstream inputFile;
   inputFile.open(argv[1]);
   dynamic_properties dp(ignore_other_properties);
   read_graphviz(inputFile, graph1, dp);
 
-  //  graph2 = graph1;
   inputFile.close();
 
   // Create callback to print mappings
@@ -37,10 +44,6 @@ int main(int argc, char* argv[]) {
   idx_t options[METIS_NOPTIONS];
   METIS_SetDefaultOptions(options);
 
-  typedef graph_traits<graph_type>::vertex_iterator vertex_iter;
-  typedef std::pair<vertex_iter, vertex_iter> vrange_t;
-  typedef graph_traits<graph_type>::adjacency_iterator adj_iter;
-  typedef std::pair<adj_iter, adj_iter> adjrange_t;
 
   vrange_t vpair = vertices(graph1);
   int i=0, j=0;
@@ -59,6 +62,7 @@ int main(int argc, char* argv[]) {
   }
 
   // Print out to verify
+  cout << "METIS partitioning: " << endl;
   for(i = 0; i < nvert + 1; ++i){
     cout << xadj[i] << ' ';
   }
@@ -78,15 +82,51 @@ int main(int argc, char* argv[]) {
   }
   cout << endl;
 
-  
+  // Create induced subgraphs based on partition vector
+  graph_type *subgraph_vect = new graph_type[K];
+  IndexMap index = get(vertex_index, graph1);
+  for (i=0; i<K; ++i) {
+    subgraph_vect[i] = graph1.create_subgraph();
+  }
+  graph_type::children_iterator ci, ci_end;
+  boost::tie(ci, ci_end) = graph1.children();
+  j = 0;
+  for (i=0; i < nvert; ++i){
+    cout << "Mapping " << index[i] << " to subgraph " << part[i] << endl;
+    add_vertex(index[i], subgraph_vect[part[i]]);
+    if (part[i] > j){
+      ++j;
+      ++ci;
+    }
+    add_vertex(index[i], *ci);
+  }
+
+  // print for testing
+  cout << "root:" << endl;
+  print_graph(graph1, get(vertex_index, graph1));
+  cout << endl;
+  for (i=0; i < K; ++i){
+    cout << "subgraph " << i << ":" << endl;
+    print_graph(subgraph_vect[i], get(vertex_index, subgraph_vect[i]));
+  }
+  cout << endl;
+  int num = 1;
+  for (boost::tie(ci, ci_end) = graph1.children(); ci != ci_end; ++ci){
+    cout << "G" << num++ << ":" << endl;
+    print_graph(*ci, get(vertex_index, *ci));
+    cout << endl;
+  }
+
   //cleanup
   delete[] xadj;
   delete[] adjncy;
   delete[] part;
+  delete[] subgraph_vect;
   xadj = NULL;
   adjncy = NULL;
   part = NULL;
+  subgraph_vect = NULL;
 
-  
+
   return 0;
 }
