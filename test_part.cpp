@@ -203,14 +203,23 @@ int main(int argc, char* argv[])
       if (temp > maxdegree)
       {
         maxdegree = temp;
-	vertID = subgraph_vect[i].local_to_global(*v);
-	avtrow[i] = vertID;
+	    vertID = subgraph_vect[i].local_to_global(*v);
+	    avtrow[i] = vertID;
       }
       cout << "maxdegree = " << maxdegree << endl;
       // while we are processing every vertex in each subgraph
       // initialise the colormap
       clr_arr[i].push_back(false) ;
     }
+  }
+    
+  //Print out the color array
+  for(i=0; i<K; ++i)
+  {
+       for(j=0; j < clr_arr[i].size(); ++j)
+       {
+            cout << clr_arr[i][j] << ' ';
+       }
   }
   cout << "cp5" << endl;
 
