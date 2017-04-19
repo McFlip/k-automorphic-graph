@@ -3,10 +3,10 @@
 #include <queue>
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/vf2_sub_graph_iso.hpp>
+// #include <boost/graph/vf2_sub_graph_iso.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/subgraph.hpp>
-// #include <boost/graph/graph_utility.hpp>
+#include <boost/graph/graph_utility.hpp>
 #include "metis.h"
 
 using namespace std;
@@ -27,6 +27,7 @@ int main(int argc, char* argv[])
   typedef property_map<graph_type, vertex_index_t>::type IndexMap;
   typedef graph_traits<graph_type>::vertex_descriptor v_descriptor;
   typedef std::vector<v_descriptor> vert_vec;
+  //  typedef std::vector<vert_vec> avt_type;
   typedef std::queue<v_descriptor> vert_que;
   typedef std::vector<bool> colormap;
 
@@ -180,7 +181,8 @@ int main(int argc, char* argv[])
   // Each column in the table represents a subgraph
   cout << "cp1" << endl;
   vert_vec *avt = new vert_vec[K];
-
+  vert_vec *avt_unmatched = new vert_vec[K];  //to store intermediate results
+  
   // Build colormap
   cout << "cp2" << endl;
 
@@ -207,15 +209,24 @@ int main(int argc, char* argv[])
       cout << "maxdegree = " << maxdegree << endl;
       // while we are processing every vertex in each subgraph
       // initialise the colormap
-//       clr_arr[i][*v] = false;
       clr_arr[i].push_back(false) ;
     }
   }
   cout << "cp5" << endl;
 
+  // Print out the starting point of AVT
+  cout << endl << "AVT:" <<endl;
+  for (i=0; i<K; ++i)
+  {
+    cout << avtrow[i] << ' ';
+  }
+  
   // Load in the first row
   // TODO: do this lol
-
+  for(i=0; i<K; ++i)
+    {
+      avt[i].push_back(avtrow[i]);
+    }
 
   // build ques for BFS
   vert_que *vque_arr = new vert_que[K];
@@ -226,23 +237,41 @@ int main(int argc, char* argv[])
 
   // Process using BFS
   cout << "cp6" << endl;
-
+  // Mark all starting nodes as visited
+  for (i=0; i < K; ++i)
+    {
+      clr_arr[i][0] = true;
+    }
+  // Process the que
+  for(i=0; i < K; ++i)
+    {
+      while (vque_arr[i].empty()==false)
+	{
+	  v_descriptor vertID = vque_arr[i].front();
+	  vque_arr[i].pop();
+	  adj_iter vi, vi_end;
+	  for(boost::tie(vi, vi_end) = adjacent_vertices(vertID, graph1); vi != vi_end; ++v)
+	    {
+	      if(clr_arr[i][*vi] == false)
+		{
+		  vque_arr[i].push(*vi);
+		  clr_arr[i][*vi] = true;
+		}
+	    }
+	}
+    }
 
   // Print out the AVT
-  /*
+  int avtRows = avt[0].size();
+  
   cout << endl << "AVT:" << endl;
-  for(i=0; i<1; ++i)
+  for(i=0; i < avtRows; ++i)
   {
     for(j=0; j<K; ++j)
     {
-      cout << *(avt[i][j]) << ' '; // Segfault ****FML :( *****
+      cout << avt[j][i] << ' '; 
     }
     cout << endl;
-  }*/
-  cout << endl << "AVT:" <<endl;
-  for (i=0; i<K; ++i)
-  {
-    cout << avtrow[i] << ' ';
   }
 
   cout << endl;
@@ -256,6 +285,8 @@ int main(int argc, char* argv[])
   delete[] avt;
   delete[] avtrow;
   delete[] clr_arr;
+  delete[] vque_arr;
+  delete[] avt_unmatched;
   xadj = NULL;
   adjncy = NULL;
   part = NULL;
@@ -263,6 +294,8 @@ int main(int argc, char* argv[])
   avt = NULL;
   avtrow = NULL;
   clr_arr = NULL;
+  vque_arr = NULL;
+  avt_unmatched = NULL;
 
 
   return 0;
