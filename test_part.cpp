@@ -214,6 +214,7 @@ int main(int argc, char* argv[])
   }
     
   //Print out the color array
+  cout << std::boolalpha;
   for(i=0; i<K; ++i)
   {
        for(j=0; j < clr_arr[i].size(); ++j)
