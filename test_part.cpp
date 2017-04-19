@@ -24,8 +24,9 @@ int main(int argc, char* argv[]) {
   typedef graph_traits<graph_type>::adjacency_iterator adj_iter;
   typedef std::pair<adj_iter, adj_iter> adjrange_t;
   typedef property_map<graph_type, vertex_index_t>::type IndexMap;
-  typedef std::vector<vertex_iter> vert_vec;
-  typedef std::queue<vertex_iter> vert_que;
+  typedef graph_traits<graph_type>::vertex_descriptor v_descriptor;
+  typedef std::vector<v_descriptor> vert_vec;
+  typedef std::queue<v_descriptor> vert_que;
   typedef std::vector<bool> colormap;
 
 
@@ -170,17 +171,20 @@ int main(int argc, char* argv[]) {
 
   // First step is to create the initial row
   cout << "cp3" << endl;
-  vertex_iter *avtrow = new vertex_iter[K];
+  v_descriptor *avtrow = new v_descriptor[K];
   for (i=0; i < K; ++i){
     int maxdegree = 0;
+    v_descriptor vertID = 0;
     cout << "cp4" << endl;
 
     for (boost::tie(v, v_end) = vertices(subgraph_vect[i]); v != v_end; ++v){
-      int temp = in_degree(*v, subgraph_vect[i]);
+      int temp = out_degree(*v, subgraph_vect[i]);
       if (temp > maxdegree){
         maxdegree = temp;
-        avtrow[i] = v;
+	vertID = subgraph_vect[i].local_to_global(*v);
+	avtrow[i] = vertID;
       }
+      cout << "maxdegree = " << maxdegree << endl;
       // while we are processing every vertex in each subgraph
       // initialise the colormap
 //       clr_arr[i][*v] = false;
@@ -214,7 +218,7 @@ int main(int argc, char* argv[]) {
   }*/
   cout << endl << "AVT:" <<endl;
   for (i=0; i<K; ++i){
-    cout << *avtrow[i] << ' ';
+    cout << avtrow[i] << ' ';
   }
 
   cout << endl;

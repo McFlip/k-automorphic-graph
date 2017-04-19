@@ -1,3 +1,7 @@
-proj4.x: proj4_driver.cpp bet.h
+part_test.exe: test_part.o
+	g++ -o part_test.exe test_part.o -L /usr/local/lib/ -lboost_graph \/usr/local/lib/libmetis.so
+test_part.o: test_part.cpp
+	g++ -std=c++11 -ggdb -o test_part.o -c test_part.cpp
+clean:
+	rm -f *.o part_test.exe
 
-	g++ -std=c++11 proj4_driver.cpp -o proj4.x
