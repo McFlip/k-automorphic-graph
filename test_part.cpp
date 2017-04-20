@@ -15,9 +15,12 @@ using namespace boost;
 const int K = 2;
 idx_t ncon = 1;
 idx_t nparts = K;
+
+//    property< vertex_index_t, int >,
+
 int main(int argc, char* argv[])
-{	
-  typedef subgraph< adjacency_list<vecS, vecS, undirectedS, no_property,
+{       
+  typedef subgraph< adjacency_list<vecS, vecS, undirectedS, uint32_t,
     property< edge_index_t, int > > > graph_type;
   typedef graph_traits<graph_type>::vertex_iterator vertex_iter;
   typedef graph_traits<graph_type>::edge_iterator edge_iter;
@@ -203,8 +206,8 @@ int main(int argc, char* argv[])
       if (temp > maxdegree)
       {
         maxdegree = temp;
-	    vertID = subgraph_vect[i].local_to_global(*v);
-	    avtrow[i] = vertID;
+            vertID = subgraph_vect[i].local_to_global(*v);
+            avtrow[i] = vertID;
       }
       cout << "maxdegree = " << maxdegree << endl;
       // while we are processing every vertex in each subgraph
@@ -221,7 +224,9 @@ int main(int argc, char* argv[])
        {
             cout << clr_arr[i][j] << ' ';
        }
+       cout << endl;
   }
+  
   cout << "cp5" << endl;
 
   // Print out the starting point of AVT
@@ -234,42 +239,74 @@ int main(int argc, char* argv[])
   // Load in the first row
   // TODO: do this lol
   for(i=0; i<K; ++i)
-    {
+  {
       avt[i].push_back(avtrow[i]);
-    }
+  }
 
   // build ques for BFS
   vert_que *vque_arr = new vert_que[K];
   for(i=0; i<K; ++i)
   {
-    vque_arr[i].push(avtrow[i]);
+      vque_arr[i].push(subgraph_vect[i].global_to_local(avtrow[i]));
   }
 
   // Process using BFS
   cout << "cp6" << endl;
   // Mark all starting nodes as visited
   for (i=0; i < K; ++i)
-    {
-      clr_arr[i][0] = true;
-    }
+  {
+      index = get(vertex_index, subgraph_vect[i]);
+      
+      clr_arr[i][index[subgraph_vect[i].global_to_local(avtrow[i])]] = true;
+  }
+
+  // Print  out the color array
+  cout << std::boolalpha;
+  for(i=0; i<K; ++i)
+  {
+       for(j=0; j < clr_arr[i].size(); ++j)
+       {
+            cout << clr_arr[i][j] << ' ';
+       }
+       cout << endl;
+  }
+  
   // Process the que
-  for(i=0; i < K; ++i)
-    {
+  
+  for(i=0; i < K; ++i){
       while (vque_arr[i].empty()==false)
-	{
-	  v_descriptor vertID = vque_arr[i].front();
-	  vque_arr[i].pop();
-	  adj_iter vi, vi_end;
-	  for(boost::tie(vi, vi_end) = adjacent_vertices(vertID, graph1); vi != vi_end; ++v)
-	    {
-	      if(clr_arr[i][*vi] == false)
-		{
-		  vque_arr[i].push(*vi);
-		  clr_arr[i][*vi] = true;
-		}
-	    }
-	}
-    }
+      {
+          //          v_descriptor vGlobalID = vque_arr[i].front();
+          //          v_descriptor vLocalID = subgraph_vect[i].global_to_local(vGlobalID);
+          v_descriptor vLocalID = vque_arr[i].front();
+          //          cout << "Processing BFS node: " << vLocalID << endl;
+          cout << "Processing BFS node: " << index[vLocalID] << endl;
+          index = get(vertex_index, subgraph_vect[i]);
+          vque_arr[i].pop();
+          adj_iter vi, vi_end;
+          for(boost::tie(vi, vi_end) = adjacent_vertices(vLocalID, subgraph_vect[i]); vi != vi_end; ++vi)
+          {
+              //              cout << subgraph_vect[i][*vi] << endl;
+              //              cout << graph1[*vi] << endl;
+              if(clr_arr[i][index[*vi]] == false)
+              {
+                  cout << "Processing adjacent node: " << index[*vi] << endl;
+                  vque_arr[i].push(*vi);
+                  clr_arr[i][index[*vi]] = true;
+                  // Print out the color map as updated
+                  for(int z=0; z<K; ++z)
+                  {
+                      for(j=0; j < clr_arr[z].size(); ++j)
+                      {
+                          cout << clr_arr[z][j] << ' ';
+                      }
+                      cout << endl;
+                  }                  
+              }
+          }
+      }
+  }
+
 
   // Print out the AVT
   int avtRows = avt[0].size();
