@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
     int nedge;
     idx_t *xadj;
     idx_t *adjncy;
-    idx_t objval = 0;
+    idx_t objval;
     idx_t *part;
     idx_t options[METIS_NOPTIONS];
 
@@ -144,6 +144,7 @@ int main(int argc, char* argv[])
     cout << endl;
 
     // Use k-way graph partition algorithm
+    objval = 0;
     METIS_PartGraphKway(&nvert, &ncon, xadj, adjncy, NULL, NULL, NULL, &nparts, NULL, NULL, NULL, &objval, part);
 
     // Print out the partition vector
