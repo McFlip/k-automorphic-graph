@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     typedef property_map<graph_type, vertex_index_t>::type IndexMap;
     typedef graph_traits<graph_type>::vertex_descriptor v_descriptor;
     typedef std::vector<v_descriptor> vert_vec;
-    typedef std::pair< v_descriptor, int > hop_pair_t
+    typedef std::pair< v_descriptor, int > hop_pair_t;
     typedef std::vector<hop_pair_t> avt_vector_t;
     typedef std::queue<hop_pair_t> vert_que;
     typedef std::vector<bool> colormap;
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     ifstream inputFile;
 
     // iterators
-    vrange_t vpair = vertices(graph1);
+    vrange_t vpair;
     int i=0;
     int j=0;
     graph_type::children_iterator ci;
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 
     // Transform the adjacency list into the Compressed Storage Format
     // TODO: consider using tie function - syntactic sugar
-    for(vpair.first; vpair.first != vpair.second; ++vpair.first)
+    for(vpair = vertices(graph1); vpair.first != vpair.second; ++vpair.first)
     {
         xadj[i+1] = xadj[i] + out_degree(*vpair.first, graph1);
         adjrange_t adjpair = adjacent_vertices(*vpair.first, graph1);
@@ -268,13 +268,13 @@ int main(int argc, char* argv[])
     // Load in the first row
     for(i=0; i<K; ++i)
     {
-        avt[i].push_back(std::make_pair(avtrow[i], 0);
+        avt_unmatched[i].push_back(std::make_pair(avtrow[i], 0));
     }
 
     // build ques for BFS
     for(i=0; i<K; ++i)
     {
-        vque_arr[i].push(subgraph_vect[i].global_to_local(avtrow[i]));
+        vque_arr[i].push(std::make_pair(subgraph_vect[i].global_to_local(avtrow[i]), 0));
     }
 
     // Process using BFS
@@ -343,7 +343,7 @@ int main(int argc, char* argv[])
     {
         for(j=0; j<K; ++j)
         {
-            cout << avt[j][i].first << '(' << avt[j][i].second << ") ";
+            cout << avt_unmatched[j][i].first << '(' << avt_unmatched[j][i].second << ") ";
         }
         cout << endl;
     }
