@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 
     // typedef declarations for templates
     typedef subgraph< adjacency_list<vecS, vecS, undirectedS, uint32_t,
-    property< _index_t, int > > > graph_type;
+        property< edge_index_t, int > > > graph_type;
     typedef graph_traits<graph_type>::vertex_iterator vertex_iter;
     typedef graph_traits<graph_type>::edge_iterator edge_iter;
     typedef std::pair<vertex_iter, vertex_iter> vrange_t;
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
     graph_type::children_iterator ci_end;
     vertex_iter v;
     vertex_iter v_end;
-    vertex_iter v_next_col;
+    //    vertex_iter v_next_col;
     edge_iter e;
     edge_iter e_end;
     adj_iter vi;
@@ -96,6 +96,7 @@ int main(int argc, char* argv[])
 
     // descriptors
     v_descriptor vLocalID;
+    v_descriptor vGlobalID;
 
     // *******Start***********
     // Read in the graph from disk
@@ -382,7 +383,7 @@ int main(int argc, char* argv[])
     // copy the first column as is
     for (i=0; i < avt_unmatched[0].size(); ++i)
     {
-        avt[0][i] = avt_unmatched[0][i].first;
+        avt[0].push_back(avt_unmatched[0][i].first);
     }
     // match from left to right by score
     // score of 0 is considered a perfect match
@@ -392,22 +393,37 @@ int main(int argc, char* argv[])
         for(j=0; j < avt[i].size(); ++j)
         {
             bestscore = 10000;
-            for(v_next_col = avt_unmatched[i+1].first.begin(); v_next_col != avt_unmatched[i+1].first.end; ++v_next_col)
+            for(auto v_next_col = avt_unmatched[i+1].begin(); v_next_col != avt_unmatched[i+1].end(); ++v_next_col)
             {
-                cout << "comparing " << avt_unmatched[i][j].first << " to " << *v_next_col;
-                degrees = std::abs(out_degree(subgraph_vect[i].global_to_local(avt_unmatched[i][j].first), subgraph_vect[i]) - out_degree(subgraph_vect[i+1].global_to_local(*v_next_col.first), subgraph_vect[i+1]));
-                hopcount = std::abs(avt_unmatched[i][j].second - *v_next_col.second);
+                cout << "comparing " << avt_unmatched[i][j].first << " to " << v_next_col->first;
+                degrees = std::abs(out_degree(subgraph_vect[i].global_to_local(avt_unmatched[i][j].first), subgraph_vect[i]) - out_degree(subgraph_vect[i+1].global_to_local(v_next_col->first), subgraph_vect[i+1]));
+                hopcount = std::abs(avt_unmatched[i][j].second - v_next_col->second);
                 score = degrees + hopcount;
                 if(score < bestscore)
                 {
                     bestscore = score;
-                    v = *v_next_col;
+                    vGlobalID = v_next_col->first;
                 }
             }
-            avt[i+1][j] = v;
+            avt[i+1].push_back(vGlobalID);
         }
     }
 
+    // Print out the AVT
+
+    cout << endl << "AVT <read this sideways>:" << endl;
+    for(i=0; i < K; ++i)
+    {
+        avtRows = avt[i].size();
+        for(j=0; j < avtRows; ++j)
+        {
+            cout << avt[i][j] << ' ';
+        }
+        cout << endl;
+    }
+    cout << endl;
+
+    
     // *******End***********
     //cleanup
     delete[] xadj;
