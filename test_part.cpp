@@ -3,6 +3,7 @@
 #include <queue>
 #include <vector>
 #include <utility>
+#include <stdlib.h>
 #include <boost/graph/adjacency_list.hpp>
 // #include <boost/graph/vf2_sub_graph_iso.hpp>
 #include <boost/graph/graphviz.hpp>
@@ -67,6 +68,7 @@ int main(int argc, char* argv[])
     graph_type::children_iterator ci_end;
     vertex_iter v;
     vertex_iter v_end;
+    vertex_iter v_next_col;
     edge_iter e;
     edge_iter e_end;
     adj_iter vi;
@@ -77,11 +79,14 @@ int main(int argc, char* argv[])
 
     // Alignment Vertex table
     vert_vec *avt = new vert_vec[K];
-    // TODO: Change to a pair with hop count
     avt_vector_t *avt_unmatched = new avt_vector_t[K];      // to store intermediate results
     v_descriptor *avtrow = new v_descriptor[K];             // the initial row
     int avtRows;                                            // number of rows in table
     int hopcount;
+    int degrees;
+    int score;
+    int bestscore;
+    v_descriptor bestV;
     hop_pair_t hopPair;
     
     // colormap & que used in BFS
@@ -238,7 +243,7 @@ int main(int argc, char* argv[])
     {
         int maxdegree = 0;
         v_descriptor vertID = 0;
-        cout << "cp4" << endl;
+        // cout << "cp4" << endl;
 
         for (boost::tie(v, v_end) = vertices(subgraph_vect[i]); v != v_end; ++v)
         {
@@ -249,7 +254,7 @@ int main(int argc, char* argv[])
                 vertID = subgraph_vect[i].local_to_global(*v);
                 avtrow[i] = vertID;
             }
-            cout << "maxdegree = " << maxdegree << endl;
+            // cout << "maxdegree = " << maxdegree << endl;
             // while we are processing every vertex in each subgraph
             // initialise the colormap
             clr_arr[i].push_back(false) ;
@@ -361,6 +366,36 @@ int main(int argc, char* argv[])
         cout << endl;
     }
     cout << endl;
+    
+    // using local scores
+    // copy the first column as is
+    for (i=0; i < avt_unmatched[0].size(); ++i)
+    {
+        avt[0][i] = avt_unmatched[0][i].first;
+    }
+    // match from left to right by score
+    // score of 0 is considered a perfect match
+    // as in same degree and same distance from hub
+    for (i=0; i < K-1; ++i)
+    {
+        for(j=0; j < avt[i].size(); ++j)
+        {
+            bestscore = 10000;
+            for(v_next_col = avt_unmatched[i+1].first.begin(); v_next_col != avt_unmatched[i+1].first.end; ++v_next_col)
+            {
+                cout << "comparing " << avt_unmatched[i][j].first << " to " << *v_next_col;
+                degrees = std::abs(out_degree(subgraph_vect[i].global_to_local(avt_unmatched[i][j].first), subgraph_vect[i]) - out_degree(subgraph_vect[i+1].global_to_local(*v_next_col.first), subgraph_vect[i+1]));
+                hopcount = std::abs(avt_unmatched[i][j].second - *v_next_col.second);
+                score = degrees + hopcount;
+                if(score < bestscore)
+                {
+                    bestscore = score;
+                    v = *v_next_col;
+                }
+            }
+            avt[i+1][j] = v;
+        }
+    }
 
     // *******End***********
     //cleanup
