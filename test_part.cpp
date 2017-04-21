@@ -48,12 +48,12 @@ int main(int argc, char* argv[])
     graph_type *subgraph_vect = new graph_type[K];
 
     // METIS library args
-    idx_t nvert = num_vertices(graph1);
-    int nedge = num_edges(graph1);
-    idx_t *xadj = new idx_t[nvert + 1];
-    idx_t *adjncy = new idx_t[nedge * 2];
+    idx_t nvert;
+    int nedge;
+    idx_t *xadj;
+    idx_t *adjncy;
     idx_t objval = 0;
-    idx_t *part = new idx_t[nvert];
+    idx_t *part;
     idx_t options[METIS_NOPTIONS];
 
     // The graphviz dot file
@@ -102,6 +102,13 @@ int main(int argc, char* argv[])
     //  vf2_print_callback<graph_type, graph_type> callback(graph1, graph2);
     //  vf2_subgraph_iso(graph1, graph2, callback);
 
+    //Initialize Graph-Dependent Variables
+    nvert = num_vertices(graph1);
+    nedge = num_edges(graph1);
+    xadj = new idx_t[nvert + 1];
+    adjncy = new idx_t[nedge * 2];
+    part = new idx_t[nvert];
+    
     // Partition the graph
 
     // initialise
