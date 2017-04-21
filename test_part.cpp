@@ -380,6 +380,24 @@ int main(int argc, char* argv[])
     cout << endl;
     
     // using local scores
+    
+    // use colormap for tracking matches
+    // initialise
+    for(i=0; i<K; ++i)
+    {
+        for(j=0; j < clr_arr[i].size(); ++j)
+        {
+            if(j==0)
+            {
+                clr_arr[i][j] = true;
+            }
+            else
+            {
+                clr_arr[i][j] = false;
+            }
+        }
+        cout << endl;
+    }
     // copy the first column as is
     for (i=0; i < avt_unmatched[0].size(); ++i)
     {
@@ -395,15 +413,21 @@ int main(int argc, char* argv[])
             bestscore = 10000;
             for(auto v_next_col = avt_unmatched[i+1].begin(); v_next_col != avt_unmatched[i+1].end(); ++v_next_col)
             {
-                cout << "comparing " << avt_unmatched[i][j].first << " to " << v_next_col->first;
-                degrees = std::abs(out_degree(subgraph_vect[i].global_to_local(avt_unmatched[i][j].first), subgraph_vect[i]) - out_degree(subgraph_vect[i+1].global_to_local(v_next_col->first), subgraph_vect[i+1]));
-                hopcount = std::abs(avt_unmatched[i][j].second - v_next_col->second);
-                score = degrees + hopcount;
-                if(score < bestscore)
+                if(clr_arr[i+1][j] == false)
                 {
-                    bestscore = score;
-                    vGlobalID = v_next_col->first;
+                    cout << "comparing " << avt_unmatched[i][j].first << " to " << v_next_col->first << endl;
+                    degrees = std::abs(out_degree(subgraph_vect[i].global_to_local(avt_unmatched[i][j].first), subgraph_vect[i]) - out_degree(subgraph_vect[i+1].global_to_local(v_next_col->first), subgraph_vect[i+1]));
+                    hopcount = std::abs(avt_unmatched[i][j].second - v_next_col->second);
+                    score = degrees + hopcount;
+                    cout << "degree diff: " << degrees << " hopcount diff: " << hopcount << " score: " << score << endl;
+                    if(score < bestscore)
+                    {
+                        bestscore = score;
+                        vGlobalID = v_next_col->first;
+                        clr_arr[i+1][j] = true;
+                    }
                 }
+                
             }
             avt[i+1].push_back(vGlobalID);
         }
