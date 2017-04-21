@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 
     // typedef declarations for templates
     typedef subgraph< adjacency_list<vecS, vecS, undirectedS, uint32_t,
-    property< edge_index_t, int > > > graph_type;
+    property< _index_t, int > > > graph_type;
     typedef graph_traits<graph_type>::vertex_iterator vertex_iter;
     typedef graph_traits<graph_type>::edge_iterator edge_iter;
     typedef std::pair<vertex_iter, vertex_iter> vrange_t;
@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
     typedef std::vector<hop_pair_t> avt_vector_t;
     typedef std::queue<hop_pair_t> vert_que;
     typedef std::vector<bool> colormap;
+    typedef std::vector<int> score_vec;
 
     // variable declarations
 
@@ -346,7 +347,17 @@ int main(int argc, char* argv[])
             }
         }
     }
-
+    
+    score_vec *score_table = new score_vec[K];
+    for(i=0; i < K; ++i)
+    {
+        avtRows = avt_unmatched[i].size();
+        for(j=0; j < avtRows; ++j)
+        {
+           avt_unmatched[i][j].first;
+        }
+        cout << endl;
+    }
 
     // Print out the AVT
 
