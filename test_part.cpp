@@ -61,8 +61,8 @@ int main(int argc, char* argv[])
 
     // iterators
     vrange_t vpair;
-    int i=0;
-    int j=0;
+    int i = 0;
+    int j = 0;
     graph_type::children_iterator ci;
     graph_type::children_iterator ci_end;
     vertex_iter v;
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
     adj_iter vi_end;
 
     // index for random access
-    IndexMap index = get(vertex_index, graph1);
+    IndexMap index;
 
     // Alignment Vertex table
     vert_vec *avt = new vert_vec[K];
@@ -108,6 +108,7 @@ int main(int argc, char* argv[])
     xadj = new idx_t[nvert + 1];
     adjncy = new idx_t[nedge * 2];
     part = new idx_t[nvert];
+    index = get(vertex_index, graph1)
     
     // Partition the graph
 
