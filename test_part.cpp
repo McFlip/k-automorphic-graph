@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
     xadj = new idx_t[nvert + 1];
     adjncy = new idx_t[nedge * 2];
     part = new idx_t[nvert];
-    index = get(vertex_index, graph1)
+    index = get(vertex_index, graph1);
     
     // Partition the graph
 
@@ -273,7 +273,8 @@ int main(int argc, char* argv[])
     {
         cout << avtrow[i] << ' ';
     }
-
+    cout << endl;
+    
     // Load in the first row
     for(i=0; i<K; ++i)
     {
@@ -315,6 +316,7 @@ int main(int argc, char* argv[])
             //  v_descriptor vGlobalID = vque_arr[i].front();
             //  v_descriptor vLocalID = subgraph_vect[i].global_to_local(vGlobalID);
             hopPair = vque_arr[i].front();
+
             vLocalID = hopPair.first;
             hopcount = hopPair.second;
             //  cout << "Processing BFS node: " << vLocalID << endl;
@@ -329,6 +331,7 @@ int main(int argc, char* argv[])
                 {
                     cout << "Processing adjacent node: " << index[*vi] << endl;
                     vque_arr[i].push(std::make_pair(*vi, hopcount+1));
+                    avt_unmatched[i].push_back(std::make_pair(subgraph_vect[i].local_to_global(*vi), hopcount+1));
                     clr_arr[i][index[*vi]] = true;
                     // Print out the color map as updated
                     for(int z=0; z<K; ++z)
@@ -346,13 +349,14 @@ int main(int argc, char* argv[])
 
 
     // Print out the AVT
-    avtRows = avt[0].size();
-    cout << endl << "AVT:" << endl;
-    for(i=0; i < avtRows; ++i)
+
+    cout << endl << "AVT (unmatched) <read this sideways>:" << endl;
+    for(i=0; i < K; ++i)
     {
-        for(j=0; j<K; ++j)
+        avtRows = avt_unmatched[i].size();
+        for(j=0; j < avtRows; ++j)
         {
-            cout << avt_unmatched[j][i].first << '(' << avt_unmatched[j][i].second << ") ";
+            cout << avt_unmatched[i][j].first << '(' << avt_unmatched[i][j].second << ") ";
         }
         cout << endl;
     }
