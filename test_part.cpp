@@ -2,6 +2,7 @@
 #include <fstream>
 #include <queue>
 #include <vector>
+#include <utility>
 #include <boost/graph/adjacency_list.hpp>
 // #include <boost/graph/vf2_sub_graph_iso.hpp>
 #include <boost/graph/graphviz.hpp>
@@ -33,8 +34,9 @@ int main(int argc, char* argv[])
     typedef property_map<graph_type, vertex_index_t>::type IndexMap;
     typedef graph_traits<graph_type>::vertex_descriptor v_descriptor;
     typedef std::vector<v_descriptor> vert_vec;
-    //  typedef std::vector<vert_vec> avt_type;
-    typedef std::queue<v_descriptor> vert_que;
+    typedef std::pair< v_descriptor, int > hop_pair_t
+    typedef std::vector<hop_pair_t> avt_vector_t;
+    typedef std::queue<hop_pair_t> vert_que;
     typedef std::vector<bool> colormap;
 
     // variable declarations
@@ -76,10 +78,12 @@ int main(int argc, char* argv[])
     // Alignment Vertex table
     vert_vec *avt = new vert_vec[K];
     // TODO: Change to a pair with hop count
-    vert_vec *avt_unmatched = new vert_vec[K];              // to store intermediate results
+    avt_vector_t *avt_unmatched = new avt_vector_t[K];      // to store intermediate results
     v_descriptor *avtrow = new v_descriptor[K];             // the initial row
     int avtRows;                                            // number of rows in table
-
+    int hopcount;
+    hop_pair_t hopPair;
+    
     // colormap & que used in BFS
     colormap *clr_arr = new colormap[K];
     vert_que *vque_arr = new vert_que[K];
@@ -264,7 +268,7 @@ int main(int argc, char* argv[])
     // Load in the first row
     for(i=0; i<K; ++i)
     {
-        avt[i].push_back(avtrow[i]);
+        avt[i].push_back(std::make_pair(avtrow[i], 0);
     }
 
     // build ques for BFS
@@ -296,12 +300,14 @@ int main(int argc, char* argv[])
     // Process the que
 
     for(i=0; i < K; ++i)
-    {
+    {        
         while (vque_arr[i].empty()==false)
         {
             //  v_descriptor vGlobalID = vque_arr[i].front();
             //  v_descriptor vLocalID = subgraph_vect[i].global_to_local(vGlobalID);
-            vLocalID = vque_arr[i].front();
+            hopPair = vque_arr[i].front();
+            vLocalID = hopPair.first;
+            hopcount = hopPair.second;
             //  cout << "Processing BFS node: " << vLocalID << endl;
             cout << "Processing BFS node: " << index[vLocalID] << endl;
             index = get(vertex_index, subgraph_vect[i]);
@@ -313,7 +319,7 @@ int main(int argc, char* argv[])
                 if(clr_arr[i][index[*vi]] == false)
                 {
                     cout << "Processing adjacent node: " << index[*vi] << endl;
-                    vque_arr[i].push(*vi);
+                    vque_arr[i].push(std::make_pair(*vi, hopcount+1));
                     clr_arr[i][index[*vi]] = true;
                     // Print out the color map as updated
                     for(int z=0; z<K; ++z)
@@ -337,7 +343,7 @@ int main(int argc, char* argv[])
     {
         for(j=0; j<K; ++j)
         {
-            cout << avt[j][i] << ' ';
+            cout << avt[j][i].first << '(' << avt[j][i].second << ") ";
         }
         cout << endl;
     }
