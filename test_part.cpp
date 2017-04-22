@@ -80,6 +80,7 @@ int main(int argc, char* argv[])
 
     // Alignment Vertex table
     vert_vec *avt = new vert_vec[K];
+    int *avt_lookup;
     avt_vector_t *avt_unmatched = new avt_vector_t[K];      // to store intermediate results
     v_descriptor *avtrow = new v_descriptor[K];             // the initial row
     int avtRows;                                            // number of rows in table
@@ -398,10 +399,19 @@ int main(int argc, char* argv[])
         cout << endl;
     }
     
+    // create the avt_lookup table
+    // We used a 2d array flattened to 1d
+    // The values in this table are the index positions in the avt
+    avt_lookup = new int[K * avt_unmatched[0].size()];
+    
     // copy the first column as is
+    
+    //use index to index into avt_lookup
+    index = get(vertex_index, subgraph_vect[0]);
     for (i=0; i < avt_unmatched[0].size(); ++i)
     {
         avt[0].push_back(avt_unmatched[0][i].first);
+        avt_lookup[index[avt_unmatched[0][i].first]] = i;
     }
     // match from left to right by score
     // score of 0 is considered a perfect match
@@ -410,6 +420,9 @@ int main(int argc, char* argv[])
     {
         // copy the first row as is
         avt[i+1].push_back(avt_unmatched[i+1][0].first);
+        
+        index = get(vertex_index, subgraph_vect[i]);
+        avt_lookup[(i+1) * avt_unmatched[0].size() + (index[avt_unmatched[i+1][0].first])] = i;
         
         // skip over first iteration so j=1
         for(j=1; j < avt[i].size(); ++j)
@@ -435,14 +448,15 @@ int main(int argc, char* argv[])
                     if(score < bestscore)
                     {
                         bestscore = score;
-                        vGlobalID = v_next_col->first;
+                        vLocalID = v_next_col->first;
                         best_position = pos_right;
                     }
                 }
                 ++pos_right;
             }
             clr_arr[i+1][best_position] = true;
-            avt[i+1].push_back(vGlobalID);
+            avt[i+1].push_back(vLocalID);
+            avt_lookup[(i + 1) * avt_unmatched[i+1].size() + (index[avt_unmatched[i+1][best_position].first])] = j;
         }
         
     }
@@ -488,6 +502,7 @@ int main(int argc, char* argv[])
     delete[] part;
     delete[] subgraph_vect;
     delete[] avt;
+    delete[] avt_lookup;
     delete[] avtrow;
     delete[] clr_arr;
     delete[] vque_arr;
@@ -503,7 +518,7 @@ int main(int argc, char* argv[])
     vque_arr = NULL;
     avt_unmatched = NULL;
     score_table = NULL;
-
+    avt_lookup = NULL;
 
     return 0;
 }
