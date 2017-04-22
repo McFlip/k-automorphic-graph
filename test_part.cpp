@@ -22,8 +22,8 @@ idx_t nparts = K;                                           // set num partition
 
 int main(int argc, char* argv[])
 {
-    // *******declarations***********
-
+    //********************************** Declarations **********************************
+	
     // typedef declarations for templates
     typedef subgraph< adjacency_list<vecS, vecS, undirectedS, uint32_t,
         property< edge_index_t, int > > > graph_type;
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     typedef std::vector<bool> colormap;
     typedef std::vector<int> score_vec;
 
-    // variable declarations
+    //*** variable declarations ***
 
     // The root graph
     graph_type graph1(0);
@@ -101,7 +101,8 @@ int main(int argc, char* argv[])
     v_descriptor vLocalID;
     v_descriptor vGlobalID;
 
-    // *******Start***********
+	
+    //********************************** Reading and Building Graph **********************************
     // Read in the graph from disk
     inputFile.open(argv[1]);
     dynamic_properties dp(ignore_other_properties);
@@ -120,8 +121,8 @@ int main(int argc, char* argv[])
     part = new idx_t[nvert];
     index = get(vertex_index, graph1);
     
-    // Partition the graph
-
+	
+    //********************************** Partition the graph with METIS algorithm **********************************
     // initialise
     METIS_SetDefaultOptions(options);
     xadj[0] = 0;
@@ -165,6 +166,7 @@ int main(int argc, char* argv[])
     }
     cout << endl;
 
+	//********************************** Create Subgraphs based on METIS result **********************************
     // Create induced subgraphs based on partition vector
     for (i=0; i<K; ++i)
     {
@@ -175,7 +177,8 @@ int main(int argc, char* argv[])
         cout << "Mapping " << index[i] << " to subgraph " << part[i] << endl;
         add_vertex(index[i], subgraph_vect[part[i]]);
     }
-/*
+	
+	/*
     j = 0;
     for (  boost::tie(ci, ci_end) = graph1.children(); ci != ci_end; ++ci)
     {
@@ -188,7 +191,7 @@ int main(int argc, char* argv[])
         }
         ++j;
     }
- */
+	*/
 
     // print for testing
 
@@ -238,6 +241,7 @@ int main(int argc, char* argv[])
     }
      */
 
+	//********************************** Building the AVT **********************************
     // Start to build the AVT
     // Each vector will represent a column in the table
     // Each column in the table represents a subgraph
@@ -318,7 +322,7 @@ int main(int argc, char* argv[])
     }
 
     // Process the que
-
+	//*** Breadth First Search ***
     for(i=0; i < K; ++i)
     {        
         while (vque_arr[i].empty()==false)
@@ -378,7 +382,19 @@ int main(int argc, char* argv[])
             maxlength = avt_unmatched[i].size();
         }
     }
-    // TODO: Got kicked out of the lab lol
+	
+    //Add vertices until all columns are maxlength
+    for (i=0; i<K; ++i)
+    {
+		while (avt_unmatched[i].size() < maxlength)
+    	{
+	    	vLocalID = add_vertex(subgraph_vect[i]);
+			avt_unmatched[i].push_back(subgraph_vect[i].local_to_global(vLocalID));
+    	} 
+    }
+
+	//Old if else for adding vertices
+	/*
     if (avt_unmatched[i].size() < avt_unmatched[i+1].size())
     {
         vLocalID = add_vertex(subgraph_vect[i]);
@@ -388,7 +404,7 @@ int main(int argc, char* argv[])
     {
         vLocalID = add_vertex(subgraph_vect[i+1]);
         avt_unmatched[i+1].push_back(subgraph_vect[i+1].local_to_global(vLocalID));
-    }
+    }*/
     
     // Print out the AVT
 
@@ -405,7 +421,7 @@ int main(int argc, char* argv[])
     cout << endl;
     
     
-    //********************************** ATTEMPT AT ADDING VERTICES **********************************
+    //*** Add Vertices at each "wave" from starting point ***
     /*typedef std::vector< int > score_vec;
 
     //Insert necessary noise vertexs into the AVT table
@@ -435,7 +451,7 @@ int main(int argc, char* argv[])
         }
     }*/
     
-    //********************************** ATTEMPT GLOBAL SCORE STUFF **********************************
+    //*** Assign a global score to each vertex ***
     //global score optimization
     /*score_vec *score_table = new score_vec[K];
     int global_score;
@@ -450,7 +466,7 @@ int main(int argc, char* argv[])
         }
     }
 	
-	//Construct AVT based on global score value
+	//*** Pair vertices based on global score
 	std::vector< int >::iterator it; 
 	for(i = 0; i < K; ++i)
 	{
@@ -599,6 +615,8 @@ int main(int argc, char* argv[])
     }
     cout << endl;
 
+	//********************************** Perform Block Alignment **********************************
+	
     
     // *******End***********
     //cleanup
