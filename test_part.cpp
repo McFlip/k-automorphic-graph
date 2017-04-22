@@ -398,6 +398,17 @@ int main(int argc, char* argv[])
         }
         cout << endl;
     }
+    
+    // Print  out the color array
+    for(i=0; i<K; ++i)
+    {
+        for(j=0; j < clr_arr[i].size(); ++j)
+        {
+            cout << clr_arr[i][j] << ' ';
+        }
+        cout << endl;
+    }
+    
     // copy the first column as is
     for (i=0; i < avt_unmatched[0].size(); ++i)
     {
@@ -408,7 +419,7 @@ int main(int argc, char* argv[])
     // as in same degree and same distance from hub
     for (i=0; i < K-1; ++i)
     {
-        for(j=0; j < avt[i].size(); ++j)
+        for(j=1; j < avt[i].size(); ++j)
         {
             bestscore = 10000;
             for(auto v_next_col = avt_unmatched[i+1].begin(); v_next_col != avt_unmatched[i+1].end(); ++v_next_col)
@@ -416,6 +427,9 @@ int main(int argc, char* argv[])
                 if(clr_arr[i+1][j] == false)
                 {
                     cout << "comparing " << avt_unmatched[i][j].first << " to " << v_next_col->first << endl;
+                    cout << "degree left: " << out_degree(subgraph_vect[i].global_to_local(avt_unmatched[i][j].first), subgraph_vect[i])
+                        << " degree right: " << out_degree(subgraph_vect[i+1].global_to_local(v_next_col->first), subgraph_vect[i+1])
+                        << endl;
                     degrees = std::abs(out_degree(subgraph_vect[i].global_to_local(avt_unmatched[i][j].first), subgraph_vect[i]) - out_degree(subgraph_vect[i+1].global_to_local(v_next_col->first), subgraph_vect[i+1]));
                     hopcount = std::abs(avt_unmatched[i][j].second - v_next_col->second);
                     score = degrees + hopcount;
