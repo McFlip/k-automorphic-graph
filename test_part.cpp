@@ -460,6 +460,16 @@ int main(int argc, char* argv[])
         }
         
     }
+    
+    // Print out the lookup table
+    for(i = 0; i < avt[i].size() * K; ++i)
+    {
+       if(i % avt[i].size() == 0)
+       {
+           cout << endl;
+       }
+       cout << avt_lookup[i] << ' ';
+    }
 
     // Print  out the color array
     for(i=0; i<K; ++i)
