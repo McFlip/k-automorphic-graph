@@ -350,6 +350,7 @@ int main(int argc, char* argv[])
     	{
 	    	vLocalID = add_vertex(subgraph_vect[i]);
 			avt_unmatched[i].push_back(std::make_pair(vLocalID, 10000));
+			clr_arr[i].push_back(false);
     	}
     }
 
