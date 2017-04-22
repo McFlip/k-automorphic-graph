@@ -425,7 +425,7 @@ int main(int argc, char* argv[])
         avt_lookup[(i+1) * avt_unmatched[0].size() + (index[avt_unmatched[i+1][0].first])] = i;
         
         // skip over first iteration so j=1
-        for(j=1; j < avt[i].size(); ++j)
+        for(j=1; j < avt[0].size(); ++j)
         {
             cout << "avt size=" << avt[i].size() << endl;
             bestscore = 10000;
@@ -462,14 +462,15 @@ int main(int argc, char* argv[])
     }
     
     // Print out the lookup table
-    for(i = 0; i < avt[i].size() * K; ++i)
+    for(i = 0; i < avt[0].size() * K; ++i)
     {
-       if(i % avt[i].size() == 0)
+       if(i % avt[0].size() == 0)
        {
            cout << endl;
        }
        cout << avt_lookup[i] << ' ';
     }
+    cout << endl;
 
     // Print  out the color array
     for(i=0; i<K; ++i)
