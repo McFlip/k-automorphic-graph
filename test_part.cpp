@@ -418,7 +418,7 @@ int main(int argc, char* argv[])
             bestscore = 10000;
             pos_right = 0;
             best_position = 0;
-            for(auto v_next_col = avt_unmatched[i+1].begin(); v_next_col != avt_unmatched[i+1].end(); ++v_next_col)
+            for(auto v_next_col = ++avt_unmatched[i+1].begin(); v_next_col != avt_unmatched[i+1].end(); ++v_next_col)
             {
                 if(clr_arr[i+1][pos_right] == false)
                 {
