@@ -616,6 +616,7 @@ int main(int argc, char* argv[])
     cout << endl;
 
 	//********************************** Perform Block Alignment **********************************
+	//TODO
 	
     
     // *******End***********
