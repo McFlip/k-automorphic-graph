@@ -87,6 +87,9 @@ int main(int argc, char* argv[])
     int degrees;
     int score;
     int bestscore;
+    int pos_right;
+    int best_position;
+    int maxlength;
     v_descriptor bestV;
     hop_pair_t hopPair;
     
@@ -365,6 +368,28 @@ int main(int argc, char* argv[])
         cout << endl;
     }
 
+    // balance out the table if odd number of vertices
+    // find the max length column
+    maxlength = 0;
+    for (i=0; i<K; ++i)
+    {
+        if (avt_unmatched[i].size() > maxlength)
+        {
+            maxlength = avt_unmatched[i].size();
+        }
+    }
+    // TODO: Got kicked out of the lab lol
+    if (avt_unmatched[i].size() < avt_unmatched[i+1].size())
+    {
+        vLocalID = add_vertex(subgraph_vect[i]);
+        avt_unmatched[i].push_back(subgraph_vect[i].local_to_global(vLocalID));
+    }
+    else if (avt_unmatched[i].size() > avt_unmatched[i+1].size())
+    {
+        vLocalID = add_vertex(subgraph_vect[i+1]);
+        avt_unmatched[i+1].push_back(subgraph_vect[i+1].local_to_global(vLocalID));
+    }
+    
     // Print out the AVT
 
     cout << endl << "AVT (unmatched) <read this sideways>:" << endl;
@@ -512,12 +537,14 @@ int main(int argc, char* argv[])
     {
         // copy the first row as is
         avt[i+1].push_back(avt_unmatched[i+1][0].first);
+        
         // skip over first iteration so j=1 and begin()+1
         for(j=1; j < avt[i].size(); ++j)
         {
+            cout << "avt size=" << avt[i].size() << endl;
             bestscore = 10000;
-            int pos_right = 0;
-            int best_position = 0;
+            pos_right = 0;
+            best_position = 0;
             for(auto v_next_col = avt_unmatched[i+1].begin(); v_next_col != avt_unmatched[i+1].end(); ++v_next_col)
             {
                 if(clr_arr[i+1][pos_right] == false)
@@ -544,6 +571,7 @@ int main(int argc, char* argv[])
             clr_arr[i+1][best_position] = true;
             avt[i+1].push_back(vGlobalID);
         }
+        
     }
 
     // Print  out the color array
