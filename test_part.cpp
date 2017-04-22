@@ -425,7 +425,7 @@ int main(int argc, char* argv[])
                 {
                     int dleft = out_degree(avt_unmatched[i][j].first, subgraph_vect[i]);
                     int dright = out_degree(v_next_col->first, subgraph_vect[i+1]);
-                    cout << "comparing " << subgraph_vect[i].global_to_local(avt_unmatched[i][j].first) << " to " << subgraph_vect[i+1].global_to_local(v_next_col->first) << endl;
+                    cout << "comparing " << subgraph_vect[i].local_to_global(avt_unmatched[i][j].first) << " to " << subgraph_vect[i+1].local_to_global(v_next_col->first) << endl;
                     cout << "degree left: " << dleft
                         << " degree right: " << dright
                         << endl;
