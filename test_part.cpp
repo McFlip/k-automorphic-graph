@@ -90,6 +90,7 @@ int main(int argc, char* argv[])
     int pos_right;
     int best_position;
     int maxlength;
+    score_vec *score_table = new score_vec[K];
     v_descriptor bestV;
     hop_pair_t hopPair;
     
@@ -260,7 +261,7 @@ int main(int argc, char* argv[])
             if (temp > maxdegree)
             {
                 maxdegree = temp;
-                vertID = subgraph_vect[i].local_to_global(*v);
+                vertID = *v;
                 avtrow[i] = vertID;
             }
             // cout << "maxdegree = " << maxdegree << endl;
@@ -285,7 +286,7 @@ int main(int argc, char* argv[])
     cout << endl << "AVT:" <<endl;
     for (i=0; i<K; ++i)
     {
-        cout << avtrow[i] << ' ';
+        cout << subgraph_vect[i].local_to_global(avtrow[i]) << ' ';
     }
     cout << endl;
     
@@ -298,7 +299,7 @@ int main(int argc, char* argv[])
     // build ques for BFS
     for(i=0; i<K; ++i)
     {
-        vque_arr[i].push(std::make_pair(subgraph_vect[i].global_to_local(avtrow[i]), 0));
+        vque_arr[i].push(std::make_pair(avtrow[i], 0));
     }
 
     // Process using BFS
@@ -307,7 +308,7 @@ int main(int argc, char* argv[])
     {
         index = get(vertex_index, subgraph_vect[i]);
 
-        clr_arr[i][index[subgraph_vect[i].global_to_local(avtrow[i])]] = true;
+        clr_arr[i][index[avtrow[i]]] = true;
     }
 
     // Print  out the color array
@@ -324,7 +325,7 @@ int main(int argc, char* argv[])
     // Process the que
 	//*** Breadth First Search ***
     for(i=0; i < K; ++i)
-    {        
+    {
         while (vque_arr[i].empty()==false)
         {
             //  v_descriptor vGlobalID = vque_arr[i].front();
@@ -345,7 +346,7 @@ int main(int argc, char* argv[])
                 {
                     cout << "Processing adjacent node: " << index[*vi] << endl;
                     vque_arr[i].push(std::make_pair(*vi, hopcount+1));
-                    avt_unmatched[i].push_back(std::make_pair(subgraph_vect[i].local_to_global(*vi), hopcount+1));
+                    avt_unmatched[i].push_back(std::make_pair(*vi, hopcount+1));
                     clr_arr[i][index[*vi]] = true;
                     // Print out the color map as updated
                     for(int z=0; z<K; ++z)
@@ -361,16 +362,18 @@ int main(int argc, char* argv[])
         }
     }
     
-    score_vec *score_table = new score_vec[K];
+    // Print out the AVT
+    cout << endl << "AVT (unmatched - UNbalanced) <read this sideways>:" << endl;
     for(i=0; i < K; ++i)
     {
         avtRows = avt_unmatched[i].size();
         for(j=0; j < avtRows; ++j)
         {
-           avt_unmatched[i][j].first;
+            cout << subgraph_vect[i].local_to_global(avt_unmatched[i][j].first) << '(' << avt_unmatched[i][j].second << ") ";
         }
         cout << endl;
     }
+    cout << endl;
 
     // balance out the table if odd number of vertices
     // find the max length column
@@ -389,8 +392,8 @@ int main(int argc, char* argv[])
 		while (avt_unmatched[i].size() < maxlength)
     	{
 	    	vLocalID = add_vertex(subgraph_vect[i]);
-			avt_unmatched[i].push_back(subgraph_vect[i].local_to_global(vLocalID));
-    	} 
+			avt_unmatched[i].push_back(vLocalID);
+    	}
     }
 
 	//Old if else for adding vertices
@@ -407,14 +410,13 @@ int main(int argc, char* argv[])
     }*/
     
     // Print out the AVT
-
-    cout << endl << "AVT (unmatched) <read this sideways>:" << endl;
+    cout << endl << "AVT (unmatched - balanced) <read this sideways>:" << endl;
     for(i=0; i < K; ++i)
     {
         avtRows = avt_unmatched[i].size();
         for(j=0; j < avtRows; ++j)
         {
-            cout << avt_unmatched[i][j].first << '(' << avt_unmatched[i][j].second << ") ";
+            cout << subgraph_vect[i].local_to_global(avt_unmatched[i][j].first) << '(' << avt_unmatched[i][j].second << ") ";
         }
         cout << endl;
     }
@@ -426,7 +428,7 @@ int main(int argc, char* argv[])
 
     //Insert necessary noise vertexs into the AVT table
 	int current_hopcount;
-    std::vector<hop_pair_t>::iterator it; 
+    std::vector<hop_pair_t>::iterator it;
 	std::vector<hop_pair_t>::iterator it2;
     it = avt_unmatched[0].begin();
 	
@@ -467,7 +469,7 @@ int main(int argc, char* argv[])
     }
 	
 	//*** Pair vertices based on global score
-	std::vector< int >::iterator it; 
+	std::vector< int >::iterator it;
 	for(i = 0; i < K; ++i)
 	{
 		avt[i].push_back(avt_unmatched[i].first);
@@ -565,9 +567,9 @@ int main(int argc, char* argv[])
             {
                 if(clr_arr[i+1][pos_right] == false)
                 {
-                    int dleft = out_degree(subgraph_vect[i].global_to_local(avt_unmatched[i][j].first), subgraph_vect[i]);
-                    int dright = out_degree(subgraph_vect[i+1].global_to_local(v_next_col->first), subgraph_vect[i+1]);
-                    cout << "comparing " << avt_unmatched[i][j].first << " to " << v_next_col->first << endl;
+                    int dleft = out_degree(avt_unmatched[i][j].first, subgraph_vect[i]);
+                    int dright = out_degree(v_next_col->first, subgraph_vect[i+1]);
+                    cout << "comparing " << subgraph_vect[i].global_to_local(avt_unmatched[i][j].first) << " to " << subgraph_vect[i+1].global_to_local(v_next_col->first) << endl;
                     cout << "degree left: " << dleft
                         << " degree right: " << dright
                         << endl;
@@ -623,7 +625,7 @@ int main(int argc, char* argv[])
 	for(i = 0; i < avt[0].size(); ++i)
 	{
 		//store first columns
-		vLocalID = subgraph_vect[0].global_to_local(avt[0][i]);
+		vLocalID = avt[0][i];
 		for(j = 1; j < K; ++j)
 		{
 			//compare edges of vLocalID to subgraph_vect[j].global_to_local(avt[j][i])
@@ -640,6 +642,7 @@ int main(int argc, char* argv[])
     
     // *******End***********
     //cleanup
+    // TODO: move these higher
     delete[] xadj;
     delete[] adjncy;
     delete[] part;
@@ -649,6 +652,7 @@ int main(int argc, char* argv[])
     delete[] clr_arr;
     delete[] vque_arr;
     delete[] avt_unmatched;
+    delete[] score_table;
     xadj = NULL;
     adjncy = NULL;
     part = NULL;
@@ -658,6 +662,7 @@ int main(int argc, char* argv[])
     clr_arr = NULL;
     vque_arr = NULL;
     avt_unmatched = NULL;
+    score_table = NULL;
 
 
     return 0;
