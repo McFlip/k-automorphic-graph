@@ -411,14 +411,14 @@ int main(int argc, char* argv[])
         // copy the first row as is
         avt[i+1].push_back(avt_unmatched[i+1][0].first);
         
-        // skip over first iteration so j=1 and begin()+1
+        // skip over first iteration so j=1
         for(j=1; j < avt[i].size(); ++j)
         {
             cout << "avt size=" << avt[i].size() << endl;
             bestscore = 10000;
             pos_right = 0;
             best_position = 0;
-            for(auto v_next_col = ++avt_unmatched[i+1].begin(); v_next_col != avt_unmatched[i+1].end(); ++v_next_col)
+            for(auto v_next_col = avt_unmatched[i+1].begin(); v_next_col != avt_unmatched[i+1].end(); ++v_next_col)
             {
                 if(clr_arr[i+1][pos_right] == false)
                 {
