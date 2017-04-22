@@ -611,7 +611,7 @@ int main(int argc, char* argv[])
         avtRows = avt[i].size();
         for(j=0; j < avtRows; ++j)
         {
-            cout << avt[i][j] << ' ';
+            cout << subgraph_vect[i].local_to_global(avt[i][j]) << ' ';
         }
         cout << endl;
     }
