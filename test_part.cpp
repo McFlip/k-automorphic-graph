@@ -349,7 +349,7 @@ int main(int argc, char* argv[])
 		while (avt_unmatched[i].size() < maxlength)
     	{
 	    	vLocalID = add_vertex(subgraph_vect[i]);
-			avt_unmatched[i].push_back(std::make_pair(vLocalID, 10000));
+			avt_unmatched[i].push_back(std::make_pair(vLocalID, 99));
 			clr_arr[i].push_back(false);
     	}
     }
@@ -386,7 +386,6 @@ int main(int argc, char* argv[])
                 clr_arr[i][j] = false;
             }
         }
-        cout << endl;
     }
     
     // Print  out the color array
