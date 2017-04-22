@@ -617,6 +617,8 @@ int main(int argc, char* argv[])
 	
 	//********************************** Perform Block Alignment **********************************
 	
+	//*** First add all edges to the first column ***
+	//*** first column will become the rolemodel ***
 	//For each row
 	for(i = 0; i < avt[0].size(); ++i)
 	{
@@ -630,6 +632,7 @@ int main(int argc, char* argv[])
 				for(boost::tie(vi2, vi2_end) = adjacent_vertices(subgraph_vect[j].global_to_local(avt[j][i]), subgraph_vect[j]); vi != vi_end; ++vi)
 		}
 	}
+	//*** compare all other columns to the rolemodel column and add edges ***
 	
 	
 	//********************************** Perform Edge Copy **********************************
