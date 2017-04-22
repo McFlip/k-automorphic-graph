@@ -617,6 +617,20 @@ int main(int argc, char* argv[])
 	
 	//********************************** Perform Block Alignment **********************************
 	
+	//For each row
+	for(i = 0; i < avt[0].size(); ++i)
+	{
+		//store first columns
+		vLocalID = subgraph_vect[0].global_to_local(avt[0][i]);
+		for(j = 1; j < K; ++j)
+		{
+			//compare edges of vLocalID to subgraph_vect[j].global_to_local(avt[j][i])
+			//need a second vi maybe vi2
+			for(boost::tie(vi, vi_end) = adjacent_vertices(vLocalID, subgraph_vect[0]); vi != vi_end; ++vi)
+				for(boost::tie(vi2, vi2_end) = adjacent_vertices(subgraph_vect[j].global_to_local(avt[j][i]), subgraph_vect[j]); vi != vi_end; ++vi)
+		}
+	}
+	
 	
 	//********************************** Perform Edge Copy **********************************
     
