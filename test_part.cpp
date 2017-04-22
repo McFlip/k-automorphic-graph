@@ -349,7 +349,7 @@ int main(int argc, char* argv[])
 		while (avt_unmatched[i].size() < maxlength)
     	{
 	    	vLocalID = add_vertex(subgraph_vect[i]);
-			avt_unmatched[i].push_back(vLocalID);
+			avt_unmatched[i].push_back(std::make_pair(vLocalID, 10000);
     	}
     }
 
@@ -474,22 +474,7 @@ int main(int argc, char* argv[])
 	
 	//********************************** Perform Block Alignment **********************************
 	
-	//*** First add all edges to the first column ***
-	//*** first column will become the rolemodel ***
-	//For each row
-	for(i = 0; i < avt[0].size(); ++i)
-	{
-		//store first columns
-		vLocalID = avt[0][i];
-		for(j = 1; j < K; ++j)
-		{
-			//compare edges of vLocalID to subgraph_vect[j].global_to_local(avt[j][i])
-			//need a second vi maybe vi2
-			for(boost::tie(vi, vi_end) = adjacent_vertices(vLocalID, subgraph_vect[0]); vi != vi_end; ++vi)
-				for(boost::tie(vi2, vi2_end) = adjacent_vertices(subgraph_vect[j].global_to_local(avt[j][i]), subgraph_vect[j]); vi != vi_end; ++vi)
-		}
-	}
-	//*** compare all other columns to the rolemodel column and add edges ***
+	
 	
 	
 	//********************************** Perform Edge Copy **********************************
