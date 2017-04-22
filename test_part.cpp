@@ -379,7 +379,98 @@ int main(int argc, char* argv[])
     }
     cout << endl;
     
-    // using local scores
+    
+    //********************************** ATTEMPT AT ADDING VERTICES **********************************
+    /*typedef std::vector< int > score_vec;
+
+    //Insert necessary noise vertexs into the AVT table
+	int current_hopcount;
+    std::vector<hop_pair_t>::iterator it; 
+	std::vector<hop_pair_t>::iterator it2;
+    it = avt_unmatched[0].begin();
+	
+	//for each item in the first AVT column
+    for(i = 0; it+i != avt_unmatched[0].end(); ++i)
+    {
+		//set the hopcount equal to the items hopcount
+        current_hopcount = (it+i)->second;
+		//for each entry in that items row
+        for(int j = 1; j < K; ++j)
+        {
+			it2 = avt_unmatched[j].begin()+i;
+            if( it2->second > current_hopcount)
+            {
+                avt_unmatched[j].insert(it2, std::make_pair(boost::add_vertex(subgraph_vect[i]), hopcount));
+            }
+			else( it2->second < current_hopcount)
+			{
+				current_hopcount = it2->second;
+				j = 0;
+			}
+        }
+    }*/
+    
+    //********************************** ATTEMPT GLOBAL SCORE STUFF **********************************
+    //global score optimization
+    /*score_vec *score_table = new score_vec[K];
+    int global_score;
+    for(i=0; i < K; ++i)
+    {
+        avtRows = avt_unmatched[i].size();
+        for(j = 1; j < avtRows; ++j)
+        {
+            global_score = out_degree(subgraph_vect[i].global_to_local(avt_unmatched[i][j].first), subgraph_vect[i]);
+            global_score += (1000 * avt_unmatched[i][j].second);
+            score_table[i].push_back(global_score);
+        }
+    }
+	
+	//Construct AVT based on global score value
+	std::vector< int >::iterator it; 
+	for(i = 0; i < K; ++i)
+	{
+		avt[i].push_back(avt_unmatched[i].first);
+		avt_unmatched[i].erase(avt_unmatched[i].begin());
+	}
+	int bestMatch;
+	int bestDiff;
+	for(i = 0; i < K; ++i)
+	{
+		while(avt_unmatched[i].empty() == false)
+		{
+			for(j = 0; j < K; ++j)
+			{
+				if(j != i)
+				{
+					bestDiff = 10000;
+					for(int zy = 0; zy < score_table[j].size(); ++zy)
+					{
+						if(bestDiff > std::abs(score_table[j][zy] - score_table[i][0]))
+						{
+							bestDiff = std::abs(score_table[j][zy] - score_table[i][0]);
+							bestMatch = zy;
+						}
+					}
+					if(bestDiff == 10000)
+					{
+						avt[j].push_back(boost::add_vertex(subgraph_vect[j]));
+					}
+					else
+					{
+						avt[j].push_back((avt_unmatched[j].begin())+bestMatch);
+						avt_unmatched[j].erase((avt_unmatched[j].begin())+bestMatch);
+						score_table[j].erase((score_table[j].begin())+bestMatch);
+					}
+				}
+			}
+			avt[i].push_back(avt_unmatched[i].first);
+			avt_unmatched[i].erase(avt_unmatched[i].begin());
+			score_table[i].erase(score_table[i].begin());
+		}
+	}*/
+
+   
+    //********************************** using local scores **********************************
     
     // use colormap for tracking matches
     // initialise
