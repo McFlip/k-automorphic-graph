@@ -422,7 +422,7 @@ int main(int argc, char* argv[])
         // copy the first row as is
         avt[i+1].push_back(avt_unmatched[i+1][0].first);
         // skip over first iteration so j=1 and begin()+1
-        for(j=0; j < avt[i].size(); ++j)
+        for(j=1; j < avt[i].size(); ++j)
         {
             bestscore = 10000;
             int pos_right = 0;
