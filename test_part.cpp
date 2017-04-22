@@ -419,18 +419,25 @@ int main(int argc, char* argv[])
     // as in same degree and same distance from hub
     for (i=0; i < K-1; ++i)
     {
-        for(j=1; j < avt[i].size(); ++j)
+        // copy the first row as is
+        avt[i+1].push_back(avt_unmatched[i+1][0].first);
+        // skip over first iteration so j=1 and begin()+1
+        for(j=0; j < avt[i].size(); ++j)
         {
             bestscore = 10000;
+            int pos_right = 0;
+            int best_position = 0;
             for(auto v_next_col = avt_unmatched[i+1].begin(); v_next_col != avt_unmatched[i+1].end(); ++v_next_col)
             {
-                if(clr_arr[i+1][j] == false)
+                if(clr_arr[i+1][pos_right] == false)
                 {
+                    int dleft = out_degree(subgraph_vect[i].global_to_local(avt_unmatched[i][j].first), subgraph_vect[i]);
+                    int dright = out_degree(subgraph_vect[i+1].global_to_local(v_next_col->first), subgraph_vect[i+1]);
                     cout << "comparing " << avt_unmatched[i][j].first << " to " << v_next_col->first << endl;
-                    cout << "degree left: " << out_degree(subgraph_vect[i].global_to_local(avt_unmatched[i][j].first), subgraph_vect[i])
-                        << " degree right: " << out_degree(subgraph_vect[i+1].global_to_local(v_next_col->first), subgraph_vect[i+1])
+                    cout << "degree left: " << dleft
+                        << " degree right: " << dright
                         << endl;
-                    degrees = std::abs(out_degree(subgraph_vect[i].global_to_local(avt_unmatched[i][j].first), subgraph_vect[i]) - out_degree(subgraph_vect[i+1].global_to_local(v_next_col->first), subgraph_vect[i+1]));
+                    degrees = std::abs(dleft - dright);
                     hopcount = std::abs(avt_unmatched[i][j].second - v_next_col->second);
                     score = degrees + hopcount;
                     cout << "degree diff: " << degrees << " hopcount diff: " << hopcount << " score: " << score << endl;
@@ -438,15 +445,27 @@ int main(int argc, char* argv[])
                     {
                         bestscore = score;
                         vGlobalID = v_next_col->first;
-                        clr_arr[i+1][j] = true;
+                        best_position = pos_right;
                     }
                 }
-                
+                ++pos_right;
             }
+            clr_arr[i+1][best_position] = true;
             avt[i+1].push_back(vGlobalID);
         }
     }
 
+    // Print  out the color array
+    for(i=0; i<K; ++i)
+    {
+        for(j=0; j < clr_arr[i].size(); ++j)
+        {
+            cout << clr_arr[i][j] << ' ';
+        }
+        cout << endl;
+    }
+
+    
     // Print out the AVT
 
     cout << endl << "AVT <read this sideways>:" << endl;
