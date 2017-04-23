@@ -22,6 +22,14 @@ idx_t nparts = K;                                           // set num partition
 
 int main(int argc, char* argv[])
 {
+    // error check
+    if (argc != 3)
+    {
+        cout << "usage: main.exe inputFile outputFile" << endl;
+        cout << "inputFile must be in graphviz dot file format." << endl;
+        return 1;
+    }
+    
     //********************************** Declarations **********************************
 	
     // typedef declarations for templates
@@ -63,7 +71,7 @@ int main(int argc, char* argv[])
     
     // Output graphviz dot file
     ofstream outputFile;
-    ostream& os = cout;
+    // ostream& os = cout;
 
     // iterators
     vrange_t vpair;
@@ -568,11 +576,12 @@ int main(int argc, char* argv[])
     
     cout << endl;
     // Dump the output to file
-    //outputFile.open(argv[2]);
-    //write_graphviz(outputFile, graph1);
-    write_graphviz_dp(os, graph1, dp.property("node_id", get(boost::vertex_index, graph1)));
-    //outputFile.close();
-    //This will print out the global vertex IDs from the root graph
+    outputFile.open(argv[2]);
+    write_graphviz_dp(outputFile, graph1, dp.property("node_id", get(boost::vertex_index, graph1)));
+    // uncomment this to print dot file to std out
+    //write_graphviz_dp(cout, graph1, dp.property("node_id", get(boost::vertex_index, graph1)));
+    outputFile.close();
+    // also print out to std out
     cout << "root:" << endl;
     print_graph(graph1, get(vertex_index, graph1));
     cout << endl;
