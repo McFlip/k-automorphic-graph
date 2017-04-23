@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
     ifstream inputFile;
     
     // Output graphviz dot file
-    ostream outputFile;
+    ofstream outputFile;
 
     // iterators
     vrange_t vpair;
