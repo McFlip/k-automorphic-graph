@@ -15,7 +15,7 @@
 template <class Edge>
 struct hash
 {
-    std::size_t operator()(Edge const& e) const
+    std::size_t hash::operator()(Edge const& e) const
     {
         return _h(e.idx);
     }
