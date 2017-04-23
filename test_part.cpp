@@ -12,7 +12,7 @@
 #include "metis.h"
 
 template <class Vertex>
-struct hash<boost::detail::adj_edge_descriptor<Vertex>>
+class hash<boost::detail::adj_edge_descriptor<Vertex>>
 {
     template <class Edge>
     std::size_t operator()(Edge const& e) const
