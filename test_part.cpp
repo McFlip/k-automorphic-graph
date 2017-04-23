@@ -606,7 +606,7 @@ int main(int argc, char* argv[])
         for(boost::tie(vi, vi_end) = vertices(*ci); vi != vi_end; ++vi)
         {
             // if degrees don't match then there is at least one crossing edge
-            if (out_degree(*vi, *ci) != out_degree(ci->local_to_global(*vi)))
+            if (out_degree(*vi, *ci) != out_degree(ci->local_to_global(*vi), graph1))
             {
                 // for each child edge, load into hash table
                 edge_set.clear();
