@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     typedef std::vector<bool> colormap;
     typedef std::vector<int> score_vec;
     typedef std::pair<v_descriptor, bool> found_t;
-    typedef std::unordered_set<e_descriptor, myhash> u_set_t;
+    typedef std::unordered_set<e_descriptor, typename myhash> u_set_t;
 
     //*** variable declarations ***
 
