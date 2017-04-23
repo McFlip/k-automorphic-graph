@@ -131,6 +131,8 @@ int main(int argc, char* argv[])
     // edge copy
     u_set_t edge_set;
     found_t found;
+    int from;
+    int to;
 
     // descriptors
     v_descriptor vLocalID;
@@ -628,7 +630,7 @@ int main(int argc, char* argv[])
                         // use avt_lookup to find the index of the source
                         index = get(vertex_index, *ci);
                         vLocalID = ci->global_to_local(orig_source);
-                        int from = avt_lookup[i * avt[0].size() + index[vLocalID]];
+                        from = avt_lookup[i * avt[0].size() + index[vLocalID]];
                         // find the subgraph of the target & get it's local ID
                         for (j=0; j < K; ++j)
                         {
@@ -638,7 +640,7 @@ int main(int argc, char* argv[])
                                 // do lookup of the target
                                 index = get(vertex_index, subgraph_vect[j]);
                                 vLocalID = found.first;
-                                int to = avt_lookup[j * avt[0].size() + index[vLocalID]];
+                                to = avt_lookup[j * avt[0].size() + index[vLocalID]];
                             }
                         }
                         copy_source = subgraph_vect[j].local_to_global(avt[j][from]);
