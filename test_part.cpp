@@ -402,6 +402,7 @@ int main(int argc, char* argv[])
     // create the avt_lookup table
     // We used a 2d array flattened to 1d
     // The values in this table are the index positions in the avt
+    // Every time we push into avt we update avt_lookup
     avt_lookup = new int[K * avt_unmatched[0].size()];
     
     // copy the first column as is
@@ -416,21 +417,25 @@ int main(int argc, char* argv[])
     // match from left to right by score
     // score of 0 is considered a perfect match
     // as in same degree and same distance from hub
+    
+    // for each column, fill in next column row by row
     for (i=0; i < K-1; ++i)
     {
         // copy the first row as is
         avt[i+1].push_back(avt_unmatched[i+1][0].first);
-        
+        // get new index for each subgraph
         index = get(vertex_index, subgraph_vect[i]);
         avt_lookup[(i+1) * avt_unmatched[0].size() + (index[avt_unmatched[i+1][0].first])] = i;
         
+        // for each item in left column, match against items in right column
         // skip over first iteration so j=1
         for(j=1; j < avt[0].size(); ++j)
         {
             cout << "avt size=" << avt[i].size() << endl;
-            bestscore = 10000;
-            pos_right = 0;
-            best_position = 0;
+            bestscore = 10000;  // initialise to silly high number; track best score so far
+            pos_right = 0;      // current position of item on right
+            best_position = 0;  // save position of best match
+            // for each item in right column see if that item is a good match
             for(auto v_next_col = avt_unmatched[i+1].begin(); v_next_col != avt_unmatched[i+1].end(); ++v_next_col)
             {
                 if(clr_arr[i+1][pos_right] == false)
@@ -443,7 +448,7 @@ int main(int argc, char* argv[])
                         << endl;
                     degrees = std::abs(dleft - dright);
                     hopcount = std::abs(avt_unmatched[i][j].second - v_next_col->second);
-                    score = degrees + hopcount;
+                    score = degrees + hopcount;  // can change to weighted score
                     cout << "degree diff: " << degrees << " hopcount diff: " << hopcount << " score: " << score << endl;
                     if(score < bestscore)
                     {
@@ -454,6 +459,8 @@ int main(int argc, char* argv[])
                 }
                 ++pos_right;
             }
+            
+            // update the colormap, push in to avt, update lookup table
             clr_arr[i+1][best_position] = true;
             avt[i+1].push_back(vLocalID);
             avt_lookup[(i + 1) * avt_unmatched[i+1].size() + (index[avt_unmatched[i+1][best_position].first])] = j;
@@ -482,9 +489,7 @@ int main(int argc, char* argv[])
         cout << endl;
     }
 
-    
     // Print out the AVT
-
     cout << endl << "AVT <read this sideways>:" << endl;
     for(i=0; i < K; ++i)
     {
