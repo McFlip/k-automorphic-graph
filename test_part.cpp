@@ -60,6 +60,9 @@ int main(int argc, char* argv[])
 
     // The graphviz dot file
     ifstream inputFile;
+    
+    // Output graphviz dot file
+    ostream outputFile;
 
     // iterators
     vrange_t vpair;
@@ -561,6 +564,14 @@ int main(int argc, char* argv[])
     
     
     // *******End***********
+    
+    // Dump the output to file
+    //outputFile.open(argv[2]);
+    cout << endl;
+    outputFile = std::cout;
+    write_graphviz(outputFile, graph1);
+    //outputFile.close();
+    
     //cleanup
     // TODO: move these higher
     delete[] xadj;
