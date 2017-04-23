@@ -503,9 +503,59 @@ int main(int argc, char* argv[])
     cout << endl;
 	
 	//********************************** Perform Block Alignment **********************************
-	
-	
-	
+
+	//*** First add all edges to the first column ***
+	//*** first column will become the rolemodel ***
+	adj_iter one;
+	adj_iter one_end;
+	adj_iter two;
+	adj_iter two_end;
+	bool matchFound;
+	//*** Make the first column the rolemodel with all edges copied ***
+	for(i = 0; i < avt[0].size(); ++i)
+	{
+		for(j = 1; j < K; ++j)
+		{
+			index = (vertex_index ,subgraph_vect[j]);
+			for(boost::tie(two, two_end) = adjacent_vertices(avt[j][i]), subgraph_vect[j]); two != two_end; ++two)
+			{
+				//find pair to vertex in column one
+				v_descriptor pair_vertex = index[avt[0][avt_lookup[j * avt[0].size() + (*two)]];
+				matchFound = false;
+				for(boost::tie(one, one_end) = adjacent_vertices(avt[0][i], subgraph_vect[0]); one != one_end; ++one)
+				{
+					if(pair_vertex == *one)
+					{
+						matchFound = true;
+					}
+				}
+				if(matchFound == false)
+					add_edge(avt[0][i], pair_vertex, subgraph_vect[0]);
+			}
+		}
+	}
+	//*** compare all other columns to the rolemodel column and add edges ***
+	for(i = 0; i < avt[0].size(); ++i)
+	{
+		for(j = 1; j < K; ++j)
+		{
+			index = (vertex_index ,subgraph_vect[0]);
+			for(boost::tie(one, one_end) = adjacent_vertices(avt[0][i]), subgraph_vect[0]); one != one_end; ++one)
+			{
+				v_descriptor pair_vertex = index[avt[j][avt_lookup[*one]]];
+				matchFound = false;
+				for(boost::tie(two, two_end) = adjacent_vertices(avt[j][i], subgraph_vect[j]); two != two_end; ++two)
+				{
+					if(pair_vertex == *two)
+					{
+						matchFound = true;
+					}
+				}
+				if(matchFound == false)
+					add_edge(avt[j][i], pair_vertex, subgraph_vect[j]);
+			}
+		}
+	}
 	
 	//********************************** Perform Edge Copy **********************************
     
