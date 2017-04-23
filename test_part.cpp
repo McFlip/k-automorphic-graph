@@ -4,6 +4,7 @@
 #include <vector>
 #include <utility>
 #include <stdlib.h>
+#include <unordered_set>
 #include <boost/graph/adjacency_list.hpp>
 // #include <boost/graph/vf2_sub_graph_iso.hpp>
 #include <boost/graph/graphviz.hpp>
@@ -11,16 +12,15 @@
 #include <boost/graph/graph_utility.hpp>
 #include "metis.h"
 
-template <class Vertex>
-struct hash<boost::detail::adj_edge_descriptor<Vertex>>
+template <class Edge>
+struct hash
 {
-    template <class Edge>
     std::size_t operator()(Edge const& e) const
     {
         return _h(e.idx);
     }
-std::hash<Vertex> _h;
-};
+}
+
 
 using namespace std;
 using namespace boost;
