@@ -13,9 +13,9 @@
 #include "metis.h"
 
 template <class Edge>
-struct hash
+struct myhash
 {
-    std::size_t hash::operator()(Edge const& e) const
+    std::size_t operator()(Edge const& e) const
     {
         return _h(e.idx);
     }
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     typedef std::vector<bool> colormap;
     typedef std::vector<int> score_vec;
     typedef std::pair<v_descriptor, bool> found_t;
-    typedef std::unordered_set<e_descriptor, hash> u_set_t;
+    typedef std::unordered_set<e_descriptor, myhash> u_set_t;
 
     //*** variable declarations ***
 
