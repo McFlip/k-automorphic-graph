@@ -5,6 +5,6 @@ automorph.o: test_k.cpp
 main.exe: main.o
 	g++ -o main.exe main.o -L /usr/local/lib/ -lboost_graph \/usr/local/lib/libmetis.so
 main.o: test_part.cpp
-	g++ -std=c++11 -ggdb -o main.o -c test_part.cpp
+	g++ -std=c++14 -ggdb -o main.o -c test_part.cpp
 clean:
 	rm -f *.o main.exe automorph.exe
