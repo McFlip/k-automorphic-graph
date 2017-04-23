@@ -570,7 +570,7 @@ int main(int argc, char* argv[])
     // Dump the output to file
     //outputFile.open(argv[2]);
     //write_graphviz(outputFile, graph1);
-    write_graphviz_dp(os, graph1, dpdp.property("node_id", get(boost::vertex_index, graph1)));
+    write_graphviz_dp(os, graph1, dp.property("node_id", get(boost::vertex_index, graph1)));
     //outputFile.close();
     //This will print out the global vertex IDs from the root graph
     cout << "root:" << endl;
