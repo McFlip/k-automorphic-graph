@@ -605,10 +605,10 @@ int main(int argc, char* argv[])
     {
         i=0;
         // for each vertex in subgraph, compare degree to parent vertex
-        for(boost::tie(vi, vi_end) = vertices(subgraph_vect[i]); vi != vi_end; ++vi)
+        for(boost::tie(v, v_end) = vertices(*ci); v != v_end; ++vi)
         {
             // if degrees don't match then there is at least one crossing edge
-            if (out_degree(*vi, *ci) != out_degree(ci->local_to_global(*vi), graph1))
+            if (out_degree(*v, *ci) != out_degree(ci->local_to_global(*v), graph1))
             {
                 // for each child edge, load into hash table
                 edge_set.clear();
@@ -618,7 +618,7 @@ int main(int argc, char* argv[])
                     edge_set.insert(eGlobalID);
                 }
                 // for each edge of parent vertex, check if it's in hash table
-                for(boost::tie(parent_e, parent_e_end) = out_edges(ci->local_to_global(*vi), graph1); parent_e != parent_e_end; ++ parent_e)
+                for(boost::tie(parent_e, parent_e_end) = out_edges(ci->local_to_global(*v), graph1); parent_e != parent_e_end; ++ parent_e)
                 {
                     if(edge_set.find(*parent_e) == edge_set.end())
                     {
