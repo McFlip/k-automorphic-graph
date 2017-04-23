@@ -42,12 +42,15 @@ int main(int argc, char* argv[])
     typedef std::pair<adj_iter, adj_iter> adjrange_t;
     typedef property_map<graph_type, vertex_index_t>::type IndexMap;
     typedef graph_traits<graph_type>::vertex_descriptor v_descriptor;
+    typedef graph_traits<graph_type>::edge_descriptor e_descriptor;
     typedef std::vector<v_descriptor> vert_vec;
     typedef std::pair< v_descriptor, int > hop_pair_t;
     typedef std::vector<hop_pair_t> avt_vector_t;
     typedef std::queue<hop_pair_t> vert_que;
     typedef std::vector<bool> colormap;
     typedef std::vector<int> score_vec;
+    typedef std::unordered_set<e_descriptor> u_set_t;
+    typedef std::pair<v_descriptor, bool> found_t;
 
     //*** variable declarations ***
 
@@ -84,6 +87,8 @@ int main(int argc, char* argv[])
     //    vertex_iter v_next_col;
     edge_iter e;
     edge_iter e_end;
+    edge_iter parent_e;
+    edge_iter parent_e_end;
     adj_iter vi;
     adj_iter vi_end;
 
@@ -110,12 +115,23 @@ int main(int argc, char* argv[])
     // colormap & que used in BFS
     colormap *clr_arr = new colormap[K];
     vert_que *vque_arr = new vert_que[K];
+    
+    // edge copy
+    u_set_t edge_set;
+    found_t found;
 
     // descriptors
     v_descriptor vLocalID;
     v_descriptor vGlobalID;
-
-	
+    v_descriptor orig_source;
+    v_descriptor orig_target;
+    v_descriptor copy_source;
+    v_descriptor copy_target;
+    e_descriptor eLocalID;
+    e_descriptor eGlobalID;
+    
+    
+    
     //********************************** Reading and Building Graph **********************************
     // Read in the graph from disk
     inputFile.open(argv[1]);
@@ -570,7 +586,58 @@ int main(int argc, char* argv[])
 	}
 	
 	//********************************** Perform Edge Copy **********************************
-    
+    // for each child subgraph
+    for (boost::tie(ci, ci_end) = graph1.children(); ci != ci_end; ++ci)
+    {
+        i=0;
+        // for each vertex in subgraph, compare degree to parent vertex
+        for(boost::tie(vi, vi_end) = vertices(*ci); vi != vi_end; ++vi)
+        {
+            // if degrees don't match then there is at least one crossing edge
+            if (out_degree(*vi, *ci) != out_degree(ci->local_to_global(*vi)))
+            {
+                // for each child edge, load into hash table
+                edge_set.clear();
+                for(boost::tie(e, e_end) = edges(*ci); e != e_end; ++e)
+                {
+                    eGlobalID = ci->local_to_global(*e);
+                    edge_set.insert(eGlobalID);
+                }
+                // for each edge of parent vertex, check if it's in hash table
+                for(boost::tie(parent_e, parent_e_end) = out_edges(ci->local_to_global(*vi), graph1); parent_e != parent_e_end; ++ parent_e)
+                {
+                    if(edge_set.find(*parent_e) == edge_set.end())
+                    {
+                        // do edge copy
+                        // get the source & target of the edge
+                        orig_source = source(*parent_e, graph1);
+                        orig_target = target(*parent_e, graph1);
+                        // find them in the avt
+                        // use avt_lookup to find the index of the source
+                        index = get(vertex_index, *ci);
+                        vLocalID = ci->global_to_local(orig_source);
+                        int from = avt_lookup[i * avt[0].size() + index[vLocalID]];
+                        // find the subgraph of the target & get it's local ID
+                        for (j=0; j < K; ++j)
+                        {
+                            found = subgraph_vect[j].find_vertex(orig_target);
+                            if(found.second)
+                            {
+                                // do lookup of the target
+                                index = get(vertex_index, subgraph_vect[j]);
+                                vLocalID = found.first;
+                                int to = avt_lookup[j * avt[0].size() + index[vLocalID]];
+                            }
+                        }
+                        copy_source = subgraph_vect[j].local_to_global(avt[j][from]);
+                        copy_target = subgraph_vect[i].local_to_global(avt[i][to]);
+                        add_edge(copy_source, copy_target, graph1);
+                    }
+                }
+            }
+        }
+        ++i;
+    }
     
     // *******End***********
     
