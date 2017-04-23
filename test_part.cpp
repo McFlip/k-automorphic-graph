@@ -520,7 +520,7 @@ int main(int argc, char* argv[])
 			for(boost::tie(two, two_end) = adjacent_vertices(avt[j][i], subgraph_vect[j]); two != two_end; ++two)
 			{
 				//find pair to vertex in column one
-				v_descriptor pair_vertex = index[avt[0][avt_lookup[j * avt[0].size() + (*two)]];
+				v_descriptor pair_vertex = index[avt[0][avt_lookup[j * avt[0].size() + (*two)]]];
 				matchFound = false;
 				for(boost::tie(one, one_end) = adjacent_vertices(avt[0][i], subgraph_vect[0]); one != one_end; ++one)
 				{
