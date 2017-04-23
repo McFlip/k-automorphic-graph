@@ -49,8 +49,20 @@ int main(int argc, char* argv[])
     typedef std::queue<hop_pair_t> vert_que;
     typedef std::vector<bool> colormap;
     typedef std::vector<int> score_vec;
-    typedef std::unordered_set<e_descriptor> u_set_t;
     typedef std::pair<v_descriptor, bool> found_t;
+    
+    template <class Vertex>
+    struct hash<boost::detail::adj_edge_descriptor<Vertex>>
+    {
+        template <class Edge>
+        std::size_t operator()(Edge const& e) const
+        {
+            return _h(e.idx);
+        }
+    std::hash<Vertex> _h;
+    };
+    
+    typedef std::unordered_set<e_descriptor, hash> u_set_t;
 
     //*** variable declarations ***
 
