@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
  size_t numEdges = atoi(argv[2]);
  ofstream outputFile;
  outputFile.open(argv[3]);
- mt19937 rng;
+ boost::mt19937 rng;
  rng.seed(uint32_t(time(0)));
 
 // Build graph
