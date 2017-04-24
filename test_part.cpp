@@ -645,11 +645,11 @@ int main(int argc, char* argv[])
                                 index = get(vertex_index, subgraph_vect[j]);
                                 vLocalID = found.first;
                                 to = avt_lookup[j * avt[0].size() + index[vLocalID]];
+                                copy_source = subgraph_vect[j].local_to_global(avt[j][from]);
+                                copy_target = subgraph_vect[i].local_to_global(avt[i][to]);
+                                cout << "i=" << i << " j=" << j << " from=" << from << " to=" << to << endl;
                             }
                         }
-                        cout << "i=" << i << " j=" << j << " from=" << from << " to=" << to << endl;
-                        copy_source = subgraph_vect[j].local_to_global(avt[j][from]);
-                        copy_target = subgraph_vect[i].local_to_global(avt[i][to]);
                         add_edge(copy_source, copy_target, graph1);
                     }
                 }
