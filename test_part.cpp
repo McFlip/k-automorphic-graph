@@ -48,6 +48,7 @@ int main(int argc, char* argv[])
         property< edge_index_t, int > > > graph_type;
     typedef graph_traits<graph_type>::vertex_iterator vertex_iter;
     typedef graph_traits<graph_type>::edge_iterator edge_iter;
+    typedef graph_traits<graph_type>::out_edge_iterator out_edge_iter;
     typedef std::pair<vertex_iter, vertex_iter> vrange_t;
     typedef graph_traits<graph_type>::adjacency_iterator adj_iter;
     typedef std::pair<adj_iter, adj_iter> adjrange_t;
@@ -99,8 +100,8 @@ int main(int argc, char* argv[])
     //    vertex_iter v_next_col;
     edge_iter e;
     edge_iter e_end;
-    edge_iter parent_e;
-    edge_iter parent_e_end;
+    out_edge_iter parent_e;
+    out_edge_iter parent_e_end;
     adj_iter vi;
     adj_iter vi_end;
 
