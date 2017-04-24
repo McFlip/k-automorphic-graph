@@ -70,4 +70,6 @@ $ /usr/bin/time -v ./adjlist.exe web-NotreDame.txt
         Socket messages received: 0
         Signals delivered: 0
         Page size (bytes): 4096
-        Exit status: 0
+        Exit status: 0g++ -I /usr/local/boost_1_63_0/ /usr/local/metis-5.1.0/include/ -o test_part.o -c test_part.cpp
+g++ -o part_test.exe test_part.o -L /usr/local/lib/ -lboost_grap
+g++ -o part_test.exe test_part.o -L /usr/local/lib/ -lboost_graph \/usr/local/lib/libmetis.so
