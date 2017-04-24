@@ -31,7 +31,9 @@ int main(int argc, char* argv[]) {
   add_edge(fromNode,  toNode, graph);
  }
 
-write_graphviz(cout, graph);
+ write_graphviz(outputFile, graph);
+ inputFile.close();
+ outputFile.close();
 
  return 0;
 }
