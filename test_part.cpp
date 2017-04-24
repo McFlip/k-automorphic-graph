@@ -622,7 +622,7 @@ int main(int argc, char* argv[])
                     edge_set.insert(eGlobalID);
                 }
                 // for each edge of parent vertex, check if it's in hash table
-                for(boost::tie(parent_e, parent_e_end) = out_edges(ci->local_to_global(*v), graph1); parent_e != parent_e_end; ++ parent_e)
+                for(boost::tie(parent_e, parent_e_end) = out_edges(subgraph_vect[i].local_to_global(*v), graph1); parent_e != parent_e_end; ++ parent_e)
                 {
                     if(edge_set.find(*parent_e) == edge_set.end())
                     {
