@@ -186,13 +186,31 @@ int main(int argc, char* argv[])
         ++i;
     }
 
-
+    // Print out to verify
+    cout << "METIS partitioning: " << endl;
+    for(i = 0; i < nvert + 1; ++i)
+    {
+        cout << xadj[i] << ' ';
+    }
+    cout << endl;
+    for(i = 0; i < nedge * 2; ++i)
+    {
+        cout << adjncy[i] << ' ';
+    }
+    cout << endl;
 
     // Use k-way graph partition algorithm
     objval = 0;
     METIS_PartGraphKway(&nvert, &ncon, xadj, adjncy, NULL, NULL, NULL, &nparts, NULL, NULL, NULL, &objval, part);
 
-    //********************************** Create Subgraphs based on METIS result **********************************
+    // Print out the partition vector
+    for(i=0; i < nvert; ++i)
+    {
+        cout << part[i] << ' ';
+    }
+    cout << endl;
+
+	//********************************** Create Subgraphs based on METIS result **********************************
     // Create induced subgraphs based on partition vector
     for (i=0; i<K; ++i)
     {
@@ -200,9 +218,33 @@ int main(int argc, char* argv[])
     }
     for (i=0; i < nvert; ++i)
     {
+        cout << "Mapping " << index[i] << " to subgraph " << part[i] << endl;
         add_vertex(index[i], subgraph_vect[part[i]]);
     }
 	
+	// print for testing
+
+    //This will print out the global vertex IDs from the root graph
+    cout << "root:" << endl;
+    print_graph(graph1, get(vertex_index, graph1));
+    cout << endl;
+    for (i=0; i < K; ++i)
+    {
+        cout << "subgraph " << i << ":" << endl;
+        cout << "vertices = ";
+        for (boost::tie(v, v_end) = vertices(subgraph_vect[i]); v != v_end; ++v)
+        {
+            cout << subgraph_vect[i].local_to_global(*v) << ", ";
+        }
+        cout << endl;
+        cout << "edges = ";
+        for (boost::tie(e, e_end) = edges(subgraph_vect[i]); e != e_end; ++e)
+        {
+            cout << subgraph_vect[i].local_to_global(*e) << ", ";
+        }
+        cout << endl;
+    }
+
     
     //********************************** Building the AVT **********************************
     // Start to build the AVT
@@ -215,6 +257,7 @@ int main(int argc, char* argv[])
     {
         int maxdegree = 0;
         v_descriptor vertID = 0;
+        // cout << "cp4" << endl;
 
         for (boost::tie(v, v_end) = vertices(subgraph_vect[i]); v != v_end; ++v)
         {
@@ -225,13 +268,31 @@ int main(int argc, char* argv[])
                 vertID = *v;
                 avtrow[i] = vertID;
             }
+            // cout << "maxdegree = " << maxdegree << endl;
             // while we are processing every vertex in each subgraph
             // initialise the colormap
             clr_arr[i].push_back(false) ;
         }
     }
 
+    //Print out the color array
+    cout << std::boolalpha;
+    for(i=0; i<K; ++i)
+    {
+        for(j=0; j < clr_arr[i].size(); ++j)
+        {
+            cout << clr_arr[i][j] << ' ';
+        }
+        cout << endl;
+    }
 
+    // Print out the starting point of AVT
+    cout << endl << "AVT:" <<endl;
+    for (i=0; i<K; ++i)
+    {
+        cout << subgraph_vect[i].local_to_global(avtrow[i]) << ' ';
+    }
+    cout << endl;
     
     // Load in the first row
     for(i=0; i<K; ++i)
@@ -254,7 +315,17 @@ int main(int argc, char* argv[])
         clr_arr[i][index[avtrow[i]]] = true;
     }
 
- 
+    // Print  out the color array
+    cout << std::boolalpha;
+    for(i=0; i<K; ++i)
+    {
+        for(j=0; j < clr_arr[i].size(); ++j)
+        {
+            cout << clr_arr[i][j] << ' ';
+        }
+        cout << endl;
+    }
+
     // Process the que
 	//*** Breadth First Search ***
     for(i=0; i < K; ++i)
@@ -267,21 +338,47 @@ int main(int argc, char* argv[])
 
             vLocalID = hopPair.first;
             hopcount = hopPair.second;
+            //  cout << "Processing BFS node: " << vLocalID << endl;
+            cout << "Processing BFS node: " << index[vLocalID] << endl;
             index = get(vertex_index, subgraph_vect[i]);
             vque_arr[i].pop();
             for(boost::tie(vi, vi_end) = adjacent_vertices(vLocalID, subgraph_vect[i]); vi != vi_end; ++vi)
             {
+                //  cout << subgraph_vect[i][*vi] << endl;
+                //  cout << graph1[*vi] << endl;
                 if(clr_arr[i][index[*vi]] == false)
                 {
+                    cout << "Processing adjacent node: " << index[*vi] << endl;
                     vque_arr[i].push(std::make_pair(*vi, hopcount+1));
                     avt_unmatched[i].push_back(std::make_pair(*vi, hopcount+1));
                     clr_arr[i][index[*vi]] = true;
-                    
+                    // Print out the color map as updated
+                    for(int z=0; z<K; ++z)
+                    {
+                        for(j=0; j < clr_arr[z].size(); ++j)
+                        {
+                            cout << clr_arr[z][j] << ' ';
+                        }
+                        cout << endl;
+                    }
                 }
             }
         }
     }
     
+    // Print out the AVT
+    cout << endl << "AVT (unmatched - UNbalanced) <read this sideways>:" << endl;
+    for(i=0; i < K; ++i)
+    {
+        avtRows = avt_unmatched[i].size();
+        for(j=0; j < avtRows; ++j)
+        {
+            cout << subgraph_vect[i].local_to_global(avt_unmatched[i][j].first) << '(' << avt_unmatched[i][j].second << ") ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+
     // balance out the table if odd number of vertices
     // find the max length column
     maxlength = 0;
@@ -305,7 +402,18 @@ int main(int argc, char* argv[])
     }
 
 	
- 
+    // Print out the AVT
+    cout << endl << "AVT (unmatched - balanced) <read this sideways>:" << endl;
+    for(i=0; i < K; ++i)
+    {
+        avtRows = avt_unmatched[i].size();
+        for(j=0; j < avtRows; ++j)
+        {
+            cout << subgraph_vect[i].local_to_global(avt_unmatched[i][j].first) << '(' << avt_unmatched[i][j].second << ") ";
+        }
+        cout << endl;
+    }
+    cout << endl;
     
     
     //********************************** using local scores **********************************
@@ -327,7 +435,15 @@ int main(int argc, char* argv[])
         }
     }
     
-
+    // Print  out the color array
+    for(i=0; i<K; ++i)
+    {
+        for(j=0; j < clr_arr[i].size(); ++j)
+        {
+            cout << clr_arr[i][j] << ' ';
+        }
+        cout << endl;
+    }
     
     // create the avt_lookup table
     // We used a 2d array flattened to 1d
@@ -361,6 +477,7 @@ int main(int argc, char* argv[])
         // skip over first iteration so j=1
         for(j=1; j < avt[0].size(); ++j)
         {
+            cout << "avt size=" << avt[i].size() << endl;
             bestscore = 10000;  // initialise to silly high number; track best score so far
             pos_right = 0;      // current position of item on right
             best_position = 0;  // save position of best match
@@ -371,9 +488,14 @@ int main(int argc, char* argv[])
                 {
                     int dleft = out_degree(avt_unmatched[i][j].first, subgraph_vect[i]);
                     int dright = out_degree(v_next_col->first, subgraph_vect[i+1]);
+                    cout << "comparing " << subgraph_vect[i].local_to_global(avt_unmatched[i][j].first) << " to " << subgraph_vect[i+1].local_to_global(v_next_col->first) << endl;
+                    cout << "degree left: " << dleft
+                        << " degree right: " << dright
+                        << endl;
                     degrees = std::abs(dleft - dright);
                     hopcount = std::abs(avt_unmatched[i][j].second - v_next_col->second);
                     score = degrees + hopcount;  // can change to weighted score
+                    cout << "degree diff: " << degrees << " hopcount diff: " << hopcount << " score: " << score << endl;
                     if(score < bestscore)
                     {
                         bestscore = score;
@@ -391,8 +513,40 @@ int main(int argc, char* argv[])
         }
         
     }
+    
+    // Print out the lookup table
+    for(i = 0; i < avt[0].size() * K; ++i)
+    {
+       if(i % avt[0].size() == 0)
+       {
+           cout << endl;
+       }
+       cout << avt_lookup[i] << ' ';
+    }
+    cout << endl;
 
+    // Print  out the color array
+    for(i=0; i<K; ++i)
+    {
+        for(j=0; j < clr_arr[i].size(); ++j)
+        {
+            cout << clr_arr[i][j] << ' ';
+        }
+        cout << endl;
+    }
 
+    // Print out the AVT
+    cout << endl << "AVT <read this sideways>:" << endl;
+    for(i=0; i < K; ++i)
+    {
+        avtRows = avt[i].size();
+        for(j=0; j < avtRows; ++j)
+        {
+            cout << subgraph_vect[i].local_to_global(avt[i][j]) << ' ';
+        }
+        cout << endl;
+    }
+    cout << endl;
 	
 	//********************************** Perform Block Alignment **********************************
 
@@ -449,18 +603,40 @@ int main(int argc, char* argv[])
 		}
 	}
 	
-
+	// print results of block alignment
+    cout << "root:" << endl;
+    print_graph(graph1, get(vertex_index, graph1));
+    cout << endl;
+    for (i=0; i < K; ++i)
+    {
+        cout << "subgraph " << i << ":" << endl;
+        cout << "vertices = ";
+        for (boost::tie(v, v_end) = vertices(subgraph_vect[i]); v != v_end; ++v)
+        {
+            cout << subgraph_vect[i].local_to_global(*v) << ", ";
+        }
+        cout << endl;
+        cout << "edges = ";
+        for (boost::tie(e, e_end) = edges(subgraph_vect[i]); e != e_end; ++e)
+        {
+            cout << subgraph_vect[i].local_to_global(*e) << ", ";
+        }
+        cout << endl;
+    }
 	
 	//********************************** Perform Edge Copy **********************************
     // for each child subgraph
     for (i=0; i < K; ++i)
     {
+        cout << "cp1" << endl;
         // for each vertex in subgraph, compare degree to parent vertex
         for(boost::tie(v, v_end) = vertices(subgraph_vect[i]); v != v_end; ++v)
         {
             // if degrees don't match then there is at least one crossing edge
+            cout << "comparing subgraph " << i << ' ' << *v << " to " << subgraph_vect[i].local_to_global(*v) << endl;
             if (out_degree(*v, subgraph_vect[i]) != out_degree(subgraph_vect[i].local_to_global(*v), graph1))
             {
+                cout << "Detected a crossing edge from vertex: " << subgraph_vect[i].local_to_global(*v) << endl;
                 // for each child edge, load into hash table
                 edge_set.clear();
                 for(boost::tie(child_e, child_e_end) = out_edges(*v, subgraph_vect[i]); child_e != child_e_end; ++child_e)
@@ -478,6 +654,7 @@ int main(int argc, char* argv[])
                         // get the source & target of the edge
                         orig_source = source(*parent_e, graph1);
                         orig_target = target(*parent_e, graph1);
+                        cout << "edge source " << orig_source << " target " << orig_target << endl;
                         // find them in the avt
                         // use avt_lookup to find the index of the source
                         index = get(vertex_index, subgraph_vect[i]);
@@ -495,6 +672,7 @@ int main(int argc, char* argv[])
                                 to = avt_lookup[j * avt[0].size() + index[vLocalID]];
                                 copy_source = subgraph_vect[j].local_to_global(avt[j][from]);
                                 copy_target = subgraph_vect[i].local_to_global(avt[i][to]);
+                                cout << "i=" << i << " j=" << j << " from=" << from << " to=" << to << endl;
                                 if(edge(copy_source, copy_target, graph1).second == false)
                                 {
                                     add_edge(copy_source, copy_target, graph1);
@@ -512,13 +690,33 @@ int main(int argc, char* argv[])
     
     // *******End***********
     
-    
+    cout << endl;
     // Dump the output to file
     outputFile.open(argv[2]);
     write_graphviz_dp(outputFile, graph1, dp.property("node_id", get(boost::vertex_index, graph1)));
     // uncomment this to print dot file to std out
     //write_graphviz_dp(cout, graph1, dp.property("node_id", get(boost::vertex_index, graph1)));
     outputFile.close();
+    // also print out to std out
+    cout << "root:" << endl;
+    print_graph(graph1, get(vertex_index, graph1));
+    cout << endl;
+    for (i=0; i < K; ++i)
+    {
+        cout << "subgraph " << i << ":" << endl;
+        cout << "vertices = ";
+        for (boost::tie(v, v_end) = vertices(subgraph_vect[i]); v != v_end; ++v)
+        {
+            cout << subgraph_vect[i].local_to_global(*v) << ", ";
+        }
+        cout << endl;
+        cout << "edges = ";
+        for (boost::tie(e, e_end) = edges(subgraph_vect[i]); e != e_end; ++e)
+        {
+            cout << subgraph_vect[i].local_to_global(*e) << ", ";
+        }
+        cout << endl;
+    }
     
     
     //cleanup
