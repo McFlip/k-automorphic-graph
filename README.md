@@ -1,7 +1,27 @@
 # k-automorphic-graph
 Advanced DB project consisting of privacy preserving graphs and queries.
+
+1.
+WebND_preprocess.exe path-to-web-NotreDame.txt
+-preprocesses the text file format that the DB is written to
+-outputs a dot file that is used by the other programs
+
+2.
+automorph.exe path-to-dot-file
+-prints out the automorphic functions of given graph
+
+3.
+main.exe path-to-input-dot-file path-to-output-dot-file
+-the main program
+-produces the k-anonymized version of the graph
+-saves the new graph to a dot file
+
+4.
+run automorph again and compare results to previous run
+
+
 Compiling flags required:
-main.cpp -mcmodel=medium
+
 anything with boost -I path/to/boost i.e. /usr/local/boost_1_63_0/boost/
 
 The Boost C++ Libraries were successfully built!
@@ -14,62 +34,17 @@ The following directory should be added to linker library paths:
 
 /usr/local/boost_1_63_0/stage/lib
 
-g++ -I /usr/local/boost_1_63_0/ -std=c++11 test_k.cpp -L/usr/local/boost_1_63_0/stage/lib/ -lboost_graph
+g++ -I /usr/local/boost_1_63_0/ -std=c++11 source.cpp -L/usr/local/boost_1_63_0/stage/lib/ -lboost_graph
+
+METIS library:
+
+g++ -I /usr/local/boost_1_63_0/ /usr/local/metis-5.1.0/include/ -o test_part.o -c test_part.cpp
+g++ -o part_test.exe test_part.o -L /usr/local/lib/ -lboost_grap
+g++ -o part_test.exe test_part.o -L /usr/local/lib/ -lboost_graph \/usr/local/lib/libmetis.so
 
 
 notes:
 web-NotreDame has Nodes: 325,729 Edges: 1,497,134
-Relying on compiler to do initialization of the matrix dropped execution time by 30 seconds.
-Going to test boost adjacency list to measure memmory difference.
-$ /usr/bin/time -v ./test.exe web-NotreDame.txt
-        Command being timed: "./test.exe web-NotreDame.txt"
-        User time (seconds): 0.19
-        System time (seconds): 1.36
-        Percent of CPU this job got: 99%
-        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.56
-        Average shared text size (kbytes): 0
-        Average unshared data size (kbytes): 0
-        Average stack size (kbytes): 0
-        Average total size (kbytes): 0
-        Maximum resident set size (kbytes): 12953704
-        Average resident set size (kbytes): 0
-        Major (requiring I/O) page faults: 0
-        Minor (reclaiming a frame) page faults: 13289
-        Voluntary context switches: 11
-        Involuntary context switches: 3
-        Swaps: 0
-        File system inputs: 0
-        File system outputs: 0
-        Socket messages sent: 0
-        Socket messages received: 0
-        Signals delivered: 0
-        Page size (bytes): 4096
-        Exit status: 0
 
-Time results from boost adjacency list:
-$ /usr/bin/time -v ./adjlist.exe web-NotreDame.txt
-        Command being timed: "./adjlist.exe web-NotreDame.txt"
-        User time (seconds): 2.36
-        System time (seconds): 0.06
-        Percent of CPU this job got: 99%
-        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.43
-        Average shared text size (kbytes): 0
-        Average unshared data size (kbytes): 0
-        Average stack size (kbytes): 0
-        Average total size (kbytes): 0
-        Maximum resident set size (kbytes): 293312
-        Average resident set size (kbytes): 0
-        Major (requiring I/O) page faults: 0
-        Minor (reclaiming a frame) page faults: 65059
-        Voluntary context switches: 11
-        Involuntary context switches: 4
-        Swaps: 0
-        File system inputs: 0
-        File system outputs: 0
-        Socket messages sent: 0
-        Socket messages received: 0
-        Signals delivered: 0
-        Page size (bytes): 4096
-        Exit status: 0g++ -I /usr/local/boost_1_63_0/ /usr/local/metis-5.1.0/include/ -o test_part.o -c test_part.cpp
-g++ -o part_test.exe test_part.o -L /usr/local/lib/ -lboost_grap
-g++ -o part_test.exe test_part.o -L /usr/local/lib/ -lboost_graph \/usr/local/lib/libmetis.so
+to test run time and space use the time command with full path
+$ /usr/bin/time -v ./test.exe web-NotreDame.txt
