@@ -1,3 +1,5 @@
+// this is the graph after block alignment
+// and before edge copy
 graph G {
 0;
 1;
