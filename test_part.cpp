@@ -605,7 +605,7 @@ int main(int argc, char* argv[])
     {
         i=0;
         // for each vertex in subgraph, compare degree to parent vertex
-        for(boost::tie(v, v_end) = vertices(subgraph_vect[i]); v != v_end; ++v)
+        for(boost::tie(v, v_end) = vertices(*ci); v != v_end; ++v)
         {
             // if degrees don't match then there is at least one crossing edge
             if (out_degree(*v, *ci) != out_degree(ci->local_to_global(*v), graph1))
