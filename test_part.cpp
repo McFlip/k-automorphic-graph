@@ -602,9 +602,8 @@ int main(int argc, char* argv[])
 	
 	//********************************** Perform Edge Copy **********************************
     // for each child subgraph
-    for (boost::tie(ci, ci_end) = graph1.children(); ci != ci_end; ++ci)
+    for (i=0; i < K; ++i)
     {
-        i=0;
         cout << "cp1" << endl;
         // for each vertex in subgraph, compare degree to parent vertex
         for(boost::tie(v, v_end) = vertices(subgraph_vect[i]); v != v_end; ++v)
@@ -630,6 +629,7 @@ int main(int argc, char* argv[])
                         // get the source & target of the edge
                         orig_source = source(*parent_e, graph1);
                         orig_target = target(*parent_e, graph1);
+                        cout << "edge source " << orig_source << " target " << orig_target << endl;
                         // find them in the avt
                         // use avt_lookup to find the index of the source
                         index = get(vertex_index, subgraph_vect[i]);
@@ -647,6 +647,7 @@ int main(int argc, char* argv[])
                                 to = avt_lookup[j * avt[0].size() + index[vLocalID]];
                             }
                         }
+                        cout << "i=" << i << " j=" << j << " from=" << from << " to=" << to << endl;
                         copy_source = subgraph_vect[j].local_to_global(avt[j][from]);
                         copy_target = subgraph_vect[i].local_to_global(avt[i][to]);
                         add_edge(copy_source, copy_target, graph1);
@@ -654,7 +655,6 @@ int main(int argc, char* argv[])
                 }
             }
         }
-        ++i;
     }
     
     // *******End***********
