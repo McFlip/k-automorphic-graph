@@ -602,6 +602,27 @@ int main(int argc, char* argv[])
 		}
 	}
 	
+	// print results of block alignment
+    cout << "root:" << endl;
+    print_graph(graph1, get(vertex_index, graph1));
+    cout << endl;
+    for (i=0; i < K; ++i)
+    {
+        cout << "subgraph " << i << ":" << endl;
+        cout << "vertices = ";
+        for (boost::tie(v, v_end) = vertices(subgraph_vect[i]); v != v_end; ++v)
+        {
+            cout << subgraph_vect[i].local_to_global(*v) << ", ";
+        }
+        cout << endl;
+        cout << "edges = ";
+        for (boost::tie(e, e_end) = edges(subgraph_vect[i]); e != e_end; ++e)
+        {
+            cout << subgraph_vect[i].local_to_global(*e) << ", ";
+        }
+        cout << endl;
+    }
+	
 	//********************************** Perform Edge Copy **********************************
     // for each child subgraph
     for (i=0; i < K; ++i)
