@@ -1,3 +1,4 @@
+all: automorph.exe main.exe
 automorph.exe: automorph.o
 	g++ -o automorph.exe automorph.o -L /usr/local/lib/ -lboost_graph
 automorph.o: test_k.cpp
