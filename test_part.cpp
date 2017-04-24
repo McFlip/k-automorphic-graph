@@ -673,13 +673,15 @@ int main(int argc, char* argv[])
                                 copy_source = subgraph_vect[j].local_to_global(avt[j][from]);
                                 copy_target = subgraph_vect[i].local_to_global(avt[i][to]);
                                 cout << "i=" << i << " j=" << j << " from=" << from << " to=" << to << endl;
+                                if(edge(copy_source, copy_target, graph1).second == false)
+                                {
+                                    add_edge(copy_source, copy_target, graph1);
+                                    added_edge_set.insert(eGlobalID);
+                                }
+                                break;
                             }
                         }
-                        if(edge(copy_source, copy_target, graph1).second == false)
-                        {
-                            add_edge(copy_source, copy_target, graph1);
-                            added_edge_set.insert(eGlobalID);
-                        }
+                        
                     }
                 }
             }
