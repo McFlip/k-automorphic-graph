@@ -611,6 +611,7 @@ int main(int argc, char* argv[])
             // if degrees don't match then there is at least one crossing edge
             if (out_degree(*v, *ci) != out_degree(ci->local_to_global(*v), graph1))
             {
+                cout << "Detected a crossing edge from vertex: " << ci->local_to_global(*v) << endl;
                 // for each child edge, load into hash table
                 edge_set.clear();
                 for(boost::tie(e, e_end) = edges(*ci); e != e_end; ++e)
