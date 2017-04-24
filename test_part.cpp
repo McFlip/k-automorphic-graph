@@ -133,6 +133,7 @@ int main(int argc, char* argv[])
     
     // edge copy
     u_set_t edge_set;
+    u_set_t added_edge_set;
     found_t found;
     int from;
     int to;
@@ -646,7 +647,8 @@ int main(int argc, char* argv[])
                 // for each edge of parent vertex, check if it's in hash table
                 for(boost::tie(parent_e, parent_e_end) = out_edges(subgraph_vect[i].local_to_global(*v), graph1); parent_e != parent_e_end; ++ parent_e)
                 {
-                    if(edge_set.find(*parent_e) == edge_set.end())
+                    if(edge_set.find(*parent_e) == edge_set.end()
+                        && added_edge_set.find(*parent_e) == added_edge_set.end())
                     {
                         // do edge copy
                         // get the source & target of the edge
@@ -673,7 +675,11 @@ int main(int argc, char* argv[])
                                 cout << "i=" << i << " j=" << j << " from=" << from << " to=" << to << endl;
                             }
                         }
-                        add_edge(copy_source, copy_target, graph1);
+                        if(edge(copy_source, copy_target, graph1).second == false)
+                        {
+                            add_edge(copy_source, copy_target, graph1);
+                            added_edge_set.insert(eGlobalID);
+                        }
                     }
                 }
             }
