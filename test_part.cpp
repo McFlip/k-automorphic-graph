@@ -611,14 +611,14 @@ int main(int argc, char* argv[])
         {
             // if degrees don't match then there is at least one crossing edge
             cout << "comparing subgraph " << i << ' ' << *v << " to " << subgraph_vect[i].local_to_global(*v) << endl;
-            if (out_degree(*v, *ci) != out_degree(ci->local_to_global(*v), graph1))
+            if (out_degree(*v, subgraph_vect[i]) != out_degree(subgraph_vect[i].local_to_global(*v), graph1))
             {
-                cout << "Detected a crossing edge from vertex: " << ci->local_to_global(*v) << endl;
+                cout << "Detected a crossing edge from vertex: " << subgraph_vect[i].local_to_global(*v) << endl;
                 // for each child edge, load into hash table
                 edge_set.clear();
-                for(boost::tie(e, e_end) = edges(*ci); e != e_end; ++e)
+                for(boost::tie(e, e_end) = edges(subgraph_vect[i]); e != e_end; ++e)
                 {
-                    eGlobalID = ci->local_to_global(*e);
+                    eGlobalID = subgraph_vect[i].local_to_global(*e);
                     edge_set.insert(eGlobalID);
                 }
                 // for each edge of parent vertex, check if it's in hash table
@@ -632,8 +632,8 @@ int main(int argc, char* argv[])
                         orig_target = target(*parent_e, graph1);
                         // find them in the avt
                         // use avt_lookup to find the index of the source
-                        index = get(vertex_index, *ci);
-                        vLocalID = ci->global_to_local(orig_source);
+                        index = get(vertex_index, subgraph_vect[i]);
+                        vLocalID = subgraph_vect[i].global_to_local(orig_source);
                         from = avt_lookup[i * avt[0].size() + index[vLocalID]];
                         // find the subgraph of the target & get it's local ID
                         for (j=0; j < K; ++j)
