@@ -605,7 +605,7 @@ int main(int argc, char* argv[])
     for (boost::tie(ci, ci_end) = graph1.children(); ci != ci_end; ++ci)
     {
         i=0;
-        cout "cp1" << endl;
+        cout << "cp1" << endl;
         // for each vertex in subgraph, compare degree to parent vertex
         for(boost::tie(v, v_end) = vertices(*ci); v != v_end; ++v)
         {
