@@ -615,7 +615,7 @@ int main(int argc, char* argv[])
                 cout << "Detected a crossing edge from vertex: " << subgraph_vect[i].local_to_global(*v) << endl;
                 // for each child edge, load into hash table
                 edge_set.clear();
-                for(boost::tie(e, e_end) = edges(subgraph_vect[i]); e != e_end; ++e)
+                for(boost::tie(e, e_end) = out_edges(*v, subgraph_vect[i]); e != e_end; ++e)
                 {
                     eGlobalID = subgraph_vect[i].local_to_global(*e);
                     edge_set.insert(eGlobalID);
