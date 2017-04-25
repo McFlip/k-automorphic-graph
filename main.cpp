@@ -40,7 +40,8 @@ int main(int argc, char* argv[])
     //********************************** Declarations **********************************
 	
 	// global declarations
-	const int K = std::atoi(argv[3]);
+// 	const int K = std::atoi(argv[3]);
+    const int K = 2;
     idx_t ncon = 1;                                             // default METIS tuning param
     idx_t nparts = K;                                           // set num partition to K
     
