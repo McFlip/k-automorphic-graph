@@ -30,9 +30,9 @@ using namespace boost;
 int main(int argc, char* argv[])
 {
     // error check
-    if (argc != 4)
+    if (argc != 3)
     {
-        cout << "usage: main.exe inputFile outputFile Kvalue" << endl;
+        cout << "usage: main.exe inputFile outputFile" << endl;
         cout << "inputFile must be in graphviz dot file format." << endl;
         return 1;
     }
@@ -40,8 +40,7 @@ int main(int argc, char* argv[])
     //********************************** Declarations **********************************
 	
 	// global declarations
-// 	const int K = std::atoi(argv[3]);
-    const int K = 4;
+    const int K = 2;
     idx_t ncon = 1;                                             // default METIS tuning param
     idx_t nparts = K;                                           // set num partition to K
     
