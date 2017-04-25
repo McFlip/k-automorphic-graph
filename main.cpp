@@ -359,7 +359,7 @@ int main(int argc, char* argv[])
         
         // for each item in left column, match against items in right column
         // skip over first iteration so j=1
-        for(j=1; j < avt[0].size(); ++j)
+        for(j=1; j < avt[i].size(); ++j)
         {
             bestscore = 10000;  // initialise to silly high number; track best score so far
             pos_right = 0;      // current position of item on right
@@ -388,7 +388,7 @@ int main(int argc, char* argv[])
             clr_arr[i+1][best_position] = true;
             avt[i+1].push_back(vLocalID);
             // index = get(vertex_index, subgraph_vect[i+1]);
-            avt_lookup[(i + 1) * avt_unmatched[0].size() + (index[vLocalID])] = j;
+            avt_lookup[(i + 1) * avt_unmatched[i].size() + (index[vLocalID])] = j;
         }
         
     }

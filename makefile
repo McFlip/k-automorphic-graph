@@ -1,4 +1,4 @@
-all: automorph.exe main.exe webND_preprocess.exe rando_graph_gen.exe
+all: automorph.exe main.exe webND_preprocess.exe rando_graph_gen.exe demo.exe
 automorph.exe: automorph.o
 	g++ -o automorph.exe automorph.o -L /usr/local/lib/ -lboost_graph
 automorph.o: test_k.cpp
@@ -15,5 +15,9 @@ rando_graph_gen.exe: rando_graph_gen.o
 	g++ -o rando_graph_gen.exe rando_graph_gen.o
 rando_graph_gen.o: rando_graph_gen.cpp
 	g++ -std=c++11 -ggdb -o rando_graph_gen.o -c rando_graph_gen.cpp
+demo.exe: OLDmain.o
+	g++ -o demo.exe OLDmain.o -L /usr/local/lib/ -lboost_graph \/usr/local/lib/libmetis.so
+OLDmain.o: OLDmain.cpp
+	g++ -std=c++14 -ggdb -o OLDmain.o -c OLDmain.cpp
 clean:
-	rm -f *.o main.exe automorph.exe webND_preprocess.exe rando_graph_gen.exe
+	rm -f *.o main.exe automorph.exe webND_preprocess.exe rando_graph_gen.exe demo.exe
