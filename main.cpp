@@ -387,7 +387,8 @@ int main(int argc, char* argv[])
             // update the colormap, push in to avt, update lookup table
             clr_arr[i+1][best_position] = true;
             avt[i+1].push_back(vLocalID);
-            avt_lookup[(i + 1) * avt_unmatched[i+1].size() + (index[avt_unmatched[i+1][best_position].first])] = j;
+            index = get(vertex_index, subgraph_vect[i+1]);
+            avt_lookup[(i + 1) * avt_unmatched[0].size() + (index[vLocalID])] = j;
         }
         
     }
