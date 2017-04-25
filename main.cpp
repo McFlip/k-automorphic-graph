@@ -387,7 +387,6 @@ int main(int argc, char* argv[])
             // update the colormap, push in to avt, update lookup table
             clr_arr[i+1][best_position] = true;
             avt[i+1].push_back(vLocalID);
-            // index = get(vertex_index, subgraph_vect[i+1]);
             avt_lookup[(i + 1) * avt_unmatched[i].size() + (index[vLocalID])] = j;
         }
         
@@ -504,7 +503,6 @@ int main(int argc, char* argv[])
                                 break;
                             }
                         }
-                        
                     }
                 }
             }
@@ -524,17 +522,51 @@ int main(int argc, char* argv[])
     
     //cleanup
     // TODO: move these higher
-    delete[] xadj;
-    delete[] adjncy;
-    delete[] part;
-    delete[] subgraph_vect;
-    delete[] avt;
-    delete[] avt_lookup;
-    delete[] avtrow;
-    delete[] clr_arr;
-    delete[] vque_arr;
-    delete[] avt_unmatched;
-    delete[] score_table;
+    if(xadj != nullptr)
+    {
+        delete[] xadj;
+    }
+    if(adjncy != nullptr)
+    {
+        delete[] adjncy;
+    }
+    if(part != nullptr)
+    {
+        delete[] part;
+    }
+    if(subgraph_vect != nullptr)
+    {
+        delete[] subgraph_vect;
+    }
+    if(avt != nullptr)
+    {
+        delete[] avt;
+    }
+    if(avt_lookup != nullptr)
+    {
+        delete[] avt_lookup;
+    }
+    if(avtrow != nullptr)
+    {
+        delete[] avtrow;
+    }
+    if(clr_arr != nullptr)
+    {
+        delete[] clr_arr;
+    }
+    if(vque_arr != nullptr)
+    {
+        delete[] vque_arr;
+    }
+    if (avt_unmatched != nullptr)
+    {
+        delete[] avt_unmatched;
+    }
+    if(score_table != nullptr)
+    {
+        delete[] score_table;
+    }
+    
     xadj = NULL;
     adjncy = NULL;
     part = NULL;
