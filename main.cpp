@@ -333,7 +333,7 @@ int main(int argc, char* argv[])
     // We used a 2d array flattened to 1d
     // The values in this table are the index positions in the avt
     // Every time we push into avt we update avt_lookup
-    avt_lookup = new int[K * avt_unmatched[0].size()];
+    avt_lookup = new int[K * avt_unmatched[0].size() * 2];
     
     // copy the first column as is
     
