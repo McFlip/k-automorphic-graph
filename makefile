@@ -16,4 +16,4 @@ rando_graph_gen.exe: rando_graph_gen.o
 rando_graph_gen.o: rando_graph_gen.cpp
 	g++ -std=c++11 -ggdb -o rando_graph_gen.o -c rando_graph_gen.cpp
 clean:
-	rm -f *.o main.exe automorph.exe webND_preprocess.exe
+	rm -f *.o main.exe automorph.exe webND_preprocess.exe rando_graph_gen.exe
