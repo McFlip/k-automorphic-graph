@@ -529,7 +529,7 @@ int main(int argc, char* argv[])
     delete[] part;
     delete[] subgraph_vect;
     delete[] avt;
-    //delete[] avt_lookup;
+    delete[] avt_lookup;
     delete[] avtrow;
     delete[] clr_arr;
     delete[] vque_arr;
