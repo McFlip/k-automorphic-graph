@@ -354,7 +354,7 @@ int main(int argc, char* argv[])
         // copy the first row as is
         avt[i+1].push_back(avt_unmatched[i+1][0].first);
         // get new index for each subgraph
-        index = get(vertex_index, subgraph_vect[i]);
+        index = get(vertex_index, subgraph_vect[i+1]);
         avt_lookup[(i+1) * avt_unmatched[0].size() + (index[avt_unmatched[i+1][0].first])] = i;
         
         // for each item in left column, match against items in right column
@@ -387,7 +387,7 @@ int main(int argc, char* argv[])
             // update the colormap, push in to avt, update lookup table
             clr_arr[i+1][best_position] = true;
             avt[i+1].push_back(vLocalID);
-            index = get(vertex_index, subgraph_vect[i+1]);
+            // index = get(vertex_index, subgraph_vect[i+1]);
             avt_lookup[(i + 1) * avt_unmatched[0].size() + (index[vLocalID])] = j;
         }
         
