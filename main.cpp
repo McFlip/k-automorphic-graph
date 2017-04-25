@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 
     // Alignment Vertex table
     vert_vec *avt = new vert_vec[K];
-    int *avt_lookup;
+    v_descriptor *avt_lookup;
     avt_vector_t *avt_unmatched = new avt_vector_t[K];      // to store intermediate results
     v_descriptor *avtrow = new v_descriptor[K];             // the initial row
     int avtRows;                                            // number of rows in table
@@ -336,7 +336,7 @@ int main(int argc, char* argv[])
     // We used a 2d array flattened to 1d
     // The values in this table are the index positions in the avt
     // Every time we push into avt we update avt_lookup
-    avt_lookup = new int[K * avt_unmatched[0].size() * 2];
+    avt_lookup = new v_descriptor[K * avt_unmatched[0].size() * K];
     
     // copy the first column as is
     
