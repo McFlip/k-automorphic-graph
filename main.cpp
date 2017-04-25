@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <fstream>
 #include <queue>
 #include <vector>
@@ -12,6 +13,7 @@
 #include <boost/graph/graph_utility.hpp>
 #include "metis.h"
 
+// Custom hash function for hash table
 template <class Edge>
 struct myhash
 {
@@ -25,24 +27,25 @@ struct myhash
 using namespace std;
 using namespace boost;
 
-// global declarations
-const int K = 2;                                            // TODO: Change this to main param
-idx_t ncon = 1;                                             // default METIS tuning param
-idx_t nparts = K;                                           // set num partition to K
-
 
 int main(int argc, char* argv[])
 {
     // error check
-    if (argc != 3)
+    if (argc != 4)
     {
-        cout << "usage: main.exe inputFile outputFile" << endl;
+        cout << "usage: main.exe inputFile outputFile Kvalue" << endl;
         cout << "inputFile must be in graphviz dot file format." << endl;
         return 1;
     }
     
     //********************************** Declarations **********************************
 	
+	// global declarations
+	const int K = std::stoi(argv[4]);
+    idx_t ncon = 1;                                             // default METIS tuning param
+    idx_t nparts = K;                                           // set num partition to K
+    
+    
     // typedef declarations for templates
     typedef subgraph< adjacency_list<vecS, vecS, undirectedS, uint32_t,
         property< edge_index_t, int > > > graph_type;
